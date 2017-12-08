@@ -138,14 +138,13 @@ class Tree():
         self.depth -= 1
 
     def alpha_beta_tree_search(self, alpha, beta, node, depth, maximizing_player, max_depth=4):
-        next_layer = list(set([node.parent for node in ]))
         if depth == max_depth:
             node.score = score(node.board)
             return node
         if not node.subnodes:
             self.expand_node(node)
         if maximizing_player:
-            value = Node(None, None, None, score=-999999999999999999999) #Negitive infinity
+            value = Node(None, None, None, score=-3267) #Negitive infinity
             for subnode in node.subnodes:
                 max_node = self.alpha_beta_tree_search(alpha, beta, subnode, depth + 1, maximizing_player=False, max_depth=max_depth)
                 value = max_node(value, max_node)
