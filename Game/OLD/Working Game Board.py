@@ -34,6 +34,7 @@ class HexGame:
         self.starting_player = starting_player
         self.log = log
         self.state = state
+        self.history = []
         # Type and Value Checking
         try:
             assert type(self.gametick) is int
@@ -41,8 +42,8 @@ class HexGame:
             assert type(self.players) is list and len(self.players) == 2
             assert type(self.do_log) is bool
             # No check for game ID
-            assert self.starting_player == 0 or 1
-            assert self.history is list
+            assert self.starting_player in ( 0 or 1)
+            assert type(self.history) is list
             assert self.state in (0, 1, 2)
 
         except AssertionError:

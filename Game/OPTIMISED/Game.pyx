@@ -25,8 +25,6 @@ cdef class DefaultValues:
       log = []
 
 cdef class HexGame:
-
-
     def __init__(self,
                  gametick=0,
                  board=DefaultValues.board,
@@ -118,6 +116,8 @@ cdef class HexGame:
 
     def load_from_log(self, file):
         self.history = json.load(file)
+		
+
 
     @staticmethod
     #Going to try to rewrite this function is Pure C and interface with Python
@@ -161,3 +161,8 @@ cdef class HexGame:
             if graph[0] in p2_side_1 and graph[-1] in p2_side_2:
                 return 2
         return 0
+
+	def get_valid_moves():
+		return [x for x, item in enumerate(self.board)]
+	
+	
