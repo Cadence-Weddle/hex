@@ -7,5 +7,5 @@ def idiot_move(game):
 '''
 #Simpler idiotbot
 def idiot_move(game)
-    return random.choice([x for x, item in enumerate(game.board) if item ==0])
+    return game.make_move(random.choice([x for x, item in enumerate(game.board) if item ==0]))
     
