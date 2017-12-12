@@ -1,5 +1,6 @@
-
+from game import HexGame
 from Heuristic import score
+#from alpha_beta import Node, full_alpha_beta, best_alpha_beta
 import sys
 import time
 
@@ -15,11 +16,11 @@ def max_node(*args):
                                             
                                             
 def min_node(*args):                        
-    curr_min = args[0]
-    for node in args[1:]:
-        if node.score < curr_min:
-            curr_min = node
-    return curr_min
+    curr_min = args[0]                      
+    for node in args[1:]:                   
+        if node.score < curr_min:           
+            curr_min = node                 
+    return curr_min                         
 def iter_flatten(iterable):
   it = iter(iterable)
   for e in it:
@@ -29,15 +30,47 @@ def iter_flatten(iterable):
     else:
       yield e
 #############################################
+'''
+class cache_object():
+    def __int__(self, object):
+        self.times_used = 1
+        self.object = object
+        self.depth = object.depth
 
+class eval_cache():
+    def __init__(self, max_size=1000000000):
+        self.table = {}
+        self.keys = self.table.keys()
+        self.max_size = max_size
+        self.inverse_table = {}
+    def add_to_cache(self, node):
+        if self.too_big():
+            keep = sorted(self.inverse_table.keys(), key=lambda x:x.times_used + 121 - x.depth)
+            remove = keep[self.max_size  - 1: -1]
+            for dels in remove:
+                self.table.pop(self.inverse_table[dels], None)
+                self.inverse_table.pop(dels)
+
+    def lookup(self, node):
+        self.table[node][1] += 1
+        return self.table[node].object
+    def too_big(self):
+        return sys.getsizeof(self.table) > self.max_size
+
+    def write(self, location):
+        pass
+
+    def read(self, location):
+        pass
+'''
 class Node():
-    def __init__(self, board, parent, depth,heuristic, score=None):
+    def __init__(self, board, parent, depth, score=None):
         self.parent = parent
         self.board = board
         self.subnodes = []
         self.score = score
         self.depth = depth
-	self.heuristic = heuristic
+
     def sort_subnodes(self,func=score):
         return sorted(self.subnodes, key=func)
 
@@ -46,23 +79,16 @@ class Node():
         self.subnodes.append(node)
         if sort:
             self.subnodes = self.sort_subnodes()
-
-   def expand(self, get_valid_moves, make_move, sort=True):
-	board = self.board
-	moves = get_valid_moves(board)
-	for move in get_valid_moves:
-		self.subnodes.append(make_move(board, move)
-	self.sort_subnodes()
-	return self.subnodes
+        
     def __getitem__(self, *key):
         return "NOT IMPLEMENTED"
 
 
 class Tree():
-
-    def __init__(self, board, player, other_player, depth=0):
+    def __init__(self, board, player,other_player, depth=4):
         self.board = board
         self.turn_conversion = {0 : -1, 1 : 1}
+
         converted_players={player : 1, other_player : -1, 0 : 0}
         if other_player == 1:
             self.player_is_first = False
@@ -75,6 +101,7 @@ class Tree():
         while  self.depth <= depth:
             self.next_layer()
 
+
     def next_layer(self):
         nodes = []
         for node in self.terminal_nodes:
@@ -83,7 +110,7 @@ class Tree():
         self.terminal_nodes = nodes
         self.depth += 1
         return list(set(nodes))
-
+    
     def expand_node(self, node, expansion_size=121):
         board = node.board
         moves = [x for x, item in enumerate(board) if item == 0]
@@ -97,17 +124,19 @@ class Tree():
         curr_depth = self.depth
         while not self.depth - curr_depth >= layers:
             self.next_layer()
-
+            
     def convert_board(self, b, c):
         for x, item in enumerate(b):
             b[x] = c[item]
         return b
-
+        
+    def __getitem__(self, *args):
+        return self.root_node[args]
+    
     def update_root_node(self, new_root_node):
         self.root_node = new_root_node
         self.depth -= 1
 
-'''
     def alpha_beta_tree_search(self, alpha, beta, node, depth, maximizing_player, max_depth=4):
         if depth == max_depth:
             node.score = score(node.board)
@@ -142,5 +171,4 @@ class Tree():
                 parent_node = curr_node.parent
             except:
                 break
-        return curr_node, node
-'''
+        return curr_nod

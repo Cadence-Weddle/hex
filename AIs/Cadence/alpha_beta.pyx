@@ -29,15 +29,25 @@ cdef class cache:
 		return node in cache
 	
 
-cdef class Node:
-    def __init__(self, np.ndarray board, parent, cdef int depth, cdef int score=0)
-
+cpdef class Node:
+    def __init__(self, game, parent, cdef int depth, cdef float score=0, cdef string get_moves="get_moves", cdef string make_move="make_moves")
 	self.parent = parent
-	self.board = board
+	self.game = game
         self.subnodes = []
         self.score = score
         self.depth = depth
+	self.make_move = make_move
+	self.get_moves = get_moves
+#Checking inputs
+	try:		
+		game = self.game
+		assert type(parent) in (Node, None)
+		getattr(game, self.get_moves)
+		getattr(game, self.make_move)
+	except:
+		raise TypeError
 
+		
     def sort_subnodes(self,func=score):
         return sorted(self.subnodes, key=func)
 
@@ -46,7 +56,96 @@ cdef class Node:
         self.subnodes.append(node)
         if sort:
             self.subnodes = self.sort_subnodes()
-        
+    
+    def expand(self):
+	game = self.game
+	moves = getattr(game, self.get_moves)()
+	for move in moves:
+		self.add_subnode(Node(getattr(game, self.make_move)(move), self, self.depth + 1, get_moves=self.get_moves, make_move=self.make_move)
+	return self.subnodes
+
+
+
+
+cpdef class Tree():
+
+    def __init__(self, game, player, other_player, depth=0):
+        self.board = board
+        self.turn_conversion = {0 : -1, 1 : 1}
+        converted_players={player : 1, other_player : -1, 0 : 0}
+        if other_player == 1:
+            self.player_is_first = False
+        else:
+            self.player_is_first = True
+        self.board = self.convert_board(board, converted_players)
+        self.depth = 0
+        self.root_node = Node(self.board, parent=None, depth=0)
+        self.terminal_nodes = []
+        while  self.depth <= depth:
+            self.next_layer()
+
+    def next_layer(self):
+        nodes = []
+        for node in self.terminal_nodes:
+            nodes.append(self.expand_node(node))
+        nodes = [i for i in iter_flatten(nodes)]
+        self.terminal_nodes = nodes
+        self.depth += 1
+        return list(set(nodes))
+
+    def expand_node(self, node, expansion_size=121):
+        board = node.board
+        moves = [x for x, item in enumerate(board) if item == 0]
+        for x in range(expansion_size):
+            temp = board
+            temp[x] = self.turn_conversion[node.depth % 2]
+            node.add_subnode(Node(board=temp, parent=node, depth=node.depth + 1))
+        return node.subnodes
+
+    def gen_layers(self,layers):
+        curr_depth = self.depth
+        while not self.depth - curr_depth >= layers:
+            self.next_layer()
+
+    def convert_board(self, b, c):
+        for x, item in enumerate(b):
+            b[x] = c[item]
+        return b
+
+    def update_root_node(self, new_root_node):
+        self.root_node = new_root_node
+        self.depth -= 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 cdef full_alpha_beta(cdef Node node, cdef Node alpha, cdef Node beta, cdef int curr_depth, cdef int max_depth,
