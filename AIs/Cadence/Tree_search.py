@@ -3,9 +3,6 @@ from Heuristic import score
 import sys
 import time
 
-
-
-#############################################
 def max_node(*args):                        
     current_max = args[0]                   
     for node in args[1:]:                   
@@ -20,6 +17,7 @@ def min_node(*args):
         if node.score < curr_min:
             curr_min = node
     return curr_min
+
 def iter_flatten(iterable):
   it = iter(iterable)
   for e in it:
@@ -28,7 +26,6 @@ def iter_flatten(iterable):
         yield f
     else:
       yield e
-#############################################
 
 class Node():
     def __init__(self, board, parent, depth,heuristic, score=None):
