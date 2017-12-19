@@ -1,4 +1,4 @@
 # hex.github.io
-A Python and Cython AI implementation for the game of [Hex].
+A Python and Cython AI implementation for the game of [^Hex].
 
-[^1]: http://mathworld.wolfram.com/GameofHex.html
+[^Hex]: http://mathworld.wolfram.com/GameofHex.html
