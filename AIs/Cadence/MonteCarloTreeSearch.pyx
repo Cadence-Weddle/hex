@@ -29,7 +29,7 @@ class MonteCarloSearch:
 				if beta =< alpha:
 					break
 			return value
-
+	#Irrelevant -- Already implemented (See AlphaBeta.pyx)
 	def best_alpha_beta(node, alpha, beta, depth, max_depth, maximising_player, count):
 		if depth == max_depth:
 			node.score = score(node)
