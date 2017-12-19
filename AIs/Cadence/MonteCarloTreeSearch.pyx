@@ -1,7 +1,7 @@
 from GameTree import Tree, Node, max_node, min_node
 from Heuristic import score
 
-class AlphaBeta:
+class MonteCarloSearch:
 	def __init__(game):
 		self.game = game
 		self.Tree = Tree(self.game)
