@@ -3,6 +3,10 @@ from MCTS import MonteCarloTreeSearch as MCTS
 from fractions import Fraction
 from numpy import sigmoid
 import random
+import os
+import pickle
+
+
 
 def var(shape)
 	return tf.Variable(tf.truncated_normal(shape, stddev=0.1))
@@ -73,7 +77,6 @@ class Bot:
 		x = ["Weight_0", "Bias_0", "Weight_1", "Bias_1", "Weight_2", "Bias_2", "fcl0w", "fclb0", "fclw1", "fclb1"]
 		return [getattr(y, self) for y in x]
 
-
 	@classmethod
 	def from_weights(Bot, weights_0, bias_0, weight_1, bias_1, weights_2, bias_2, fcl0w, fclb0, fclw1, fclb1):
 		return Bot(weight_0=weights_0, bias_0=bias_0, weight_1=weights_1, weight_2=weights_2, bias_2=bias_2, fully_connected_layer_weights_0=fcl0w, fully_connected_layer_bias_0=fclb0, fully_connected_layer_weights_1=fclw1, fully_connected_layer_bias_1=fclb1)
@@ -125,6 +128,26 @@ def generation(bots=bots, number=1):
 
 	return set(copy_bot_list)
 
+def write_generation(bots,number, location=None):
+	if not location:
+		location = "\\generations\\generation_{}".format(number)
+	try:
+		bots[0]
+	except:
+		raise Exception("Bots not iterable")
 
+	def ensure_dir(file_path):
+    	directory = os.path.dirname(file_path)
+    	if not os.path.exists(directory):
+        	os.makedirs(directory)
+	ensure_dir(location)
+
+	record_file = "generation_storage_location_record.data"
+	record_file = open(record_file, 'a+')
+	record_file.write(str(number) + ":" + location + ":" + str(len(bots)) + "\n")
+	os.makedirs(location)
+
+	for i, bot in enumerate(bots):
+		file = open("BOT_{}".format(i))
 
 bots = set()

@@ -3,10 +3,11 @@ from Heuristic import score
 from AlphaBeta import *
 
 class MonteCarloSearch:
-	def __init__(game):
+	def __init__(game, policy):
 		self.game = game
 		self.Tree = Tree(self.game)
-
+		self.policy = policy
+		
 	def full_alpha_beta(node, alpha, beta, depth, max_depth, maximising_player):
 		if depth == max_depth:
 			node.score = score(node)
