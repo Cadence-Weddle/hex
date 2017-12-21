@@ -111,11 +111,19 @@ def generation(bots=bots, number=1):
 	for bot in bot_list:
 		bot.update_score()
 
+
+    #Breeding / Mutation. a bot can do only one. 
 	bot_list = sorted(bot_list, key=lamda x: x.score)[::-1]
 	bot_list[:int(len(bot_list) * 2/3)]
-	copy_bot_list = bot_list
+	copy_bot_list = []
+	for bot in bot_list:
+		prob = sigmoid(number)
+		if prob: #Choose option with probability sigmoid(number)
+			copy_bot_list.append(*mutate(bot))
+		else:
+			copy_bot_list.append(breed(bot, random.choice(bot_list)))
 
-	return set(bot_list)
+	return set(copy_bot_list)
 
 
 
