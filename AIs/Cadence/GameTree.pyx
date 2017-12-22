@@ -30,7 +30,7 @@ class Node:
 		game := Self explanatory
 		parent := Parent node, None if this node is the root node in the tree
 		depth := The depth of the node
-		score := The value of this node
+		score := The value of this node: In the case of MCTS the total value of the state
 		get_moves := String of the method name which returns a list of valid moves. This method is an attribute of game
 		make_move := String of the method name which returns a game which has had a move made. This method is an attribute of game
 
@@ -116,6 +116,7 @@ class Tree:
 
 	def update_root_node(self, new_root_node):
 		self.root_node = new_root_node
+		self.root_node.update_depth(1)
 		self.depth -= 1
 
 
