@@ -98,7 +98,7 @@ def mutate(parent):
 	return parent, Bot.from_weights(*[x + tf.truncated_normal(x.shape, stddev=0.1) for x in parent.return_weights()])
 
 def generation(bots=bots, number=1):
-	bot_list = list(bots)
+	bot_list = bots
 	num_bots = len(bot_list)
 	playable_bots = {x : bot_list[x] for x in bot_list}
 	for i, bot in enumerate(bot_list):
@@ -126,28 +126,45 @@ def generation(bots=bots, number=1):
 		else:
 			copy_bot_list.append(breed(bot, random.choice(bot_list)))
 
-	return set(copy_bot_list)
+	return copy_bot_list
 
-def write_generation(bots,number, location=None):
-	if not location:
-		location = "\\generations\\generation_{}".format(number)
+def write_generation(bots,index, **kwargs):
+	location = kwargs.get("location", "generations\\generation_{}\\".format(str(number)))
 	try:
+		assert type(index) is str
+		assert type(location) is str
 		bots[0]
 	except:
-		raise Exception("Bots not iterable")
-
+		raise Exception("Invalid arguments")
 	def ensure_dir(file_path):
     	directory = os.path.dirname(file_path)
-    	if not os.path.exists(directory):
-        	os.makedirs(directory)
+		if not os.path.exists(directory):
+	    	os.makedirs(directory)
 	ensure_dir(location)
 
-	record_file = "generation_storage_location_record.data"
+	record_file = "generation_loader.table"
 	record_file = open(record_file, 'a+')
-	record_file.write(str(number) + ":" + location + ":" + str(len(bots)) + "\n")
-	os.makedirs(location)
-
+	record_file.write(index + ":" + location + ":" + str(len(bots)) + "\n")
+	os.makedir(location)
 	for i, bot in enumerate(bots):
-		file = open("BOT_{}".format(i))
+		file = open("BOT_{}.pickle".format(i), 'ax')
+		pickle.dump(bot, file)
+		file.close()
+	record_file.close()
+	return location
 
-bots = set()
+def load_generation(index, **kwargs)
+	record_file = kwargs.get(record_file, "generation_loader.table")
+	record_file.open(record_file, "r")
+	bots = []
+	stored_generations = record_file.readlines()
+	location_data = [x for x in stored_generations if x.split(":")[0] == number][0].split(":")
+	location = location_data[1]
+	for i in range(int(location_data[-1])):
+		x = open(location + "BOT_{}".format(i), "r")
+		bots.append(pickle.load(x))
+		x.close()
+	record_file.close()
+	return bots
+
+def play_game()
