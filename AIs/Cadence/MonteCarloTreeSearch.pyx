@@ -7,7 +7,9 @@ class MonteCarloSearch:
 		self.game = game
 		self.Tree = Tree(self.game)
 		self.policy = policy
-		
+
+
+
 	def full_alpha_beta(node, alpha, beta, depth, max_depth, maximising_player):
 		if depth == max_depth:
 			node.score = score(node)
@@ -31,6 +33,7 @@ class MonteCarloSearch:
 				if beta =< alpha:
 					break
 			return value
+
 
 	def best_alpha_beta(node, alpha, beta, depth, max_depth, maximising_player, count):
 		if depth == max_depth:
