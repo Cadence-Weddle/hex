@@ -1,19 +1,20 @@
 
 import keras
-from keras.layers import Activation
+from keras.layers import Activation, BatchNormalization, Conv2D, Input, Dense
+'''
 from keras.layers import BatchNormalization
 from keras.layers import Conv2D
 from keras.layers import Input
 from keras.layers import Dense
+'''
 from keras.models import Model
 from keras.utils import plot_model
-
+from keras.optimizers import SGD
 
 
 
 class NeuralNetwork:
     def __init__(self, resid_num_iter=15, input_shape=(11,11,1)):
-
         def residual_section(model):
             output = Conv2D(256, (3, 3), padding='same')(model)
             output = BatchNormalization()(output)
@@ -62,14 +63,26 @@ class NeuralNetwork:
 
         self.NeuralNetworkModel = Model(inputs=[self.input_data], outputs=[self.policy_output, self.value_output])
 
+
     def plot_model(self, fp='model.png'):
         plot_model(self.NeuralNetworkModel, to_file=fp)
 
-# def train_model():
+    def predict(board):
 
-# def evaluate_network():
 
-# def predict():
+ def train_model(model, data, optimiser=SGD(), batch_size=50 **kwargs):
+    x, y = data[0], data[1]
+    try:
+        assert(len(x) == len(y))
+    except AssertionError:
+        raise Exception("Length(x)={} but Length(y)={}. Invalid data".format(len(x), len(y))) 
+    epochs = kwargs.get("epochs", len(x) / batch_size)
 
-My_model = NeuralNetwork()
-My_model.plot_model(fp='magik.svg')
+    model.compile(optimizer=optimiser, loss=kwargs.get("loss", "categorical_crossentropy"), metrics=["accuracy"])
+    model.fit(x, y, epochs=epochs, batch_size=batch_size)
+ def evaluate_network():
+
+
+if __name__ == "__main__":
+    My_model = NeuralNetwork()
+    My_model.plot_model(fp='magik.svg')
