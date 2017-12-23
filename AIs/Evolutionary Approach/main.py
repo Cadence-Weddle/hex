@@ -5,6 +5,7 @@ from numpy import sigmoid
 import random
 import os
 import pickle
+from Game import HexGame
 
 
 
@@ -17,7 +18,7 @@ def bias_var(shape):
 	return var(shape)
 
 def conv(x, W)
-	return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding="VALID")
+	return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding="SAME")
 
 
 class Bot:
@@ -92,14 +93,14 @@ def breed(*parents, **kwargs):
 	fclb0 = [x.fclb0 for x in parents]
 	fcl1w = [x.fclw1 for x in parents]		
 	fclb1 = [x.fclb1 for x in parents]
-	return parents, Bot.set_weights(weights_0, bias_0, weights_1, bias_1, weights_2, bias_2, fcl0w, fclb0)
+	return parents, Bot.from_weights(weights_0, bias_0, weights_1, bias_1, weights_2, bias_2, fcl0w, fclb0)
 
 def mutate(parent):
 	return parent, Bot.from_weights(*[x + tf.truncated_normal(x.shape, stddev=0.1) for x in parent.return_weights()])
 
-def generation(bots=bots, number=1):
+def generation(bots=bots, number=1, **kwargs):
 	bot_list = bots
-	num_bots = len(bot_list)
+	num_bots = kwargs.get("num_bots", len(bot_list))
 	playable_bots = {x : bot_list[x] for x in bot_list}
 	for i, bot in enumerate(bot_list):
 		del playable_bots[i]
@@ -117,11 +118,12 @@ def generation(bots=bots, number=1):
 
     #Breeding / Mutation. a bot can do only one. 
 	bot_list = sorted(bot_list, key=lamda x: x.score)[::-1]
-	bot_list[:int(len(bot_list) * 2/3)]
+	bot_list[:num_bots]
 	copy_bot_list = []
 	for bot in bot_list:
-		prob = sigmoid(number)
-		if prob: #Choose option with probability sigmoid(number)
+		with tf.Session() as sess:	
+			prob = 1 -  sess.run(tf.nn.sigmoid(float(number)))[0]
+		if random.choice(prob * 10000 * [1] + (1-prob) * 10000 * [0]): #Choose option with probability sigmoid(number)
 			copy_bot_list.append(*mutate(bot))
 		else:
 			copy_bot_list.append(breed(bot, random.choice(bot_list)))
@@ -129,7 +131,7 @@ def generation(bots=bots, number=1):
 	return copy_bot_list
 
 def write_generation(bots,index, **kwargs):
-	location = kwargs.get("location", "generations\\generation_{}\\".format(str(number)))
+	location = kwargs.get("location", "generations\\generation_{}\\".format(str(index)))
 	try:
 		assert type(index) is str
 		assert type(location) is str
@@ -167,4 +169,7 @@ def load_generation(index, **kwargs)
 	record_file.close()
 	return bots
 
-def play_game()
+def play_game(model1, model2):
+	game = HexGame()
+	mcts1 = MCTS(policy=model1.output)
+	mcts2 = MCTS(policy=model2.output)
