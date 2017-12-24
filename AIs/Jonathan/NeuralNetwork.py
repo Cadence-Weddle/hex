@@ -68,6 +68,7 @@ class NeuralNetwork:
         plot_model(self.NeuralNetworkModel, to_file=fp)
 
     def predict(board):
+        return model.predict(board) #Probobly won't work, I likely need to format the data. 
 
 
  def train_model(model, data, optimiser=SGD(), batch_size=50 **kwargs):
@@ -80,6 +81,8 @@ class NeuralNetwork:
 
     model.compile(optimizer=optimiser, loss=kwargs.get("loss", "categorical_crossentropy"), metrics=["accuracy"])
     model.fit(x, y, epochs=epochs, batch_size=batch_size)
+    return model
+
  def evaluate_network():
 
 
