@@ -16,7 +16,7 @@ def weight_var(shape):
 	return var(shape)
 def bias_var(shape):
 	return var(shape)
-
+	
 def conv(x, W)
 	return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding="SAME")
 

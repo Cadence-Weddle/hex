@@ -1,4 +1,4 @@
-
+import tensorflow as tf
 import keras
 from keras.layers import Activation, BatchNormalization, Conv2D, Input, Dense
 '''
@@ -61,31 +61,32 @@ class NeuralNetwork:
         self.policy_output = policy_head(self.x)
         self.value_output = value_head(self.x)
 
-        self.NeuralNetworkModel = Model(inputs=[self.input_data], outputs=[self.policy_output, self.value_output])
+        self.model = Model(inputs=[self.input_data], outputs=[self.policy_output, self.value_output])
 
 
     def plot_model(self, fp='model.png'):
         plot_model(self.NeuralNetworkModel, to_file=fp)
 
     def predict(board):
-        return model.predict(board) #Probobly won't work, I likely need to format the data. 
+        shape=board.shape
+        if shape != (11,11,1):
+            board.reshape(11,11,1)
+        return model.predict(board) #Probably won't work, I likely need to format the data. 
 
 
- def train_model(model, data, optimiser=SGD(), batch_size=50 **kwargs):
-    x, y = data[0], data[1]
-    try:
-        assert(len(x) == len(y))
-    except AssertionError:
-        raise Exception("Length(x)={} but Length(y)={}. Invalid data".format(len(x), len(y))) 
-    epochs = kwargs.get("epochs", len(x) / batch_size)
-
-    model.compile(optimizer=optimiser, loss=kwargs.get("loss", "categorical_crossentropy"), metrics=["accuracy"])
-    model.fit(x, y, epochs=epochs, batch_size=batch_size)
-    return model
-
- def evaluate_network():
+     def train_model(self, data, optimiser=SGD(), batch_size=50 epochs=20):
+        model = self.model
+        x, y = data[0], data[1]
+        try:
+            assert(len(x) == len(y))
+        except AssertionError:
+            raise Exception("Length(x)={} but Length(y)={}. Invalid data".format(len(x), len(y))) 
+        epochs = kwargs.get("epochs", len(x) / batch_size)
+        model.compile(optimizer=optimiser, loss=kwargs.get("loss", "categorical_crossentropy"), metrics=["accuracy"])
+        model.fit(x, y, batch_size=len(x))
+        return model
 
 
 if __name__ == "__main__":
     My_model = NeuralNetwork()
-    My_model.plot_model(fp='magik.svg')
+    My_model.plot_model(fp='model_architecture.svg')

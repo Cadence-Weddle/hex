@@ -1,75 +1,49 @@
 from GameTree import Tree, Node, max_node, min_node
 from Heuristic import score
 from AlphaBeta import *
+import tensorflow as tf
+import numpy as np
 
-class MonteCarloSearch:
-	def __init__(game, policy):
+def policy_wrapper(NeuralNetwork, device="/gpu:0"):
+	def func(game):
+		board = game.board
+		with tf.Session() as sess
+			with tf.device(device):
+				return NeuralNetwork.predict(board)
+	return func
+
+
+
+
+class  MCTS_Node(Node):
+	"""docstring for  MCTS_Node"""
+	def __init__(self, game, parent, value float score=0, get_moves="get_valid_moves", make_move="make_move"):
+		Node.__init__(game, parent, get_moves=get_moves, make_move=make_move)
+		self.visits = 0
+		self.expanded = False
+		self.score = 0
+		self.move_prob = 0
+		self.value = value #Value head of network evalutaion, different from score.
+		self.sim_subnodes = []
+
+
+	def update_score():
+		self.score = (np.mean([node.score for node in self.sim_subnodes]) + self.value) / (1 + self.visits) #As per original alphago paper. 
+		
+	def value(node):
+		return something #I don't know what
+
+
+class MonteCarloSearch(Tree):
+	def __init__(game, policy, **kwargs):
+		Tree.__init__(game, root_node=MCTS_Node(game, None, 0, get_moves=kwargs.get("get_valid_moves"), make_move=kwargs.get("make_move")))
 		self.game = game
-		self.Tree = Tree(self.game)
-		self.policy = policy
+		self.policy = policy_wrapper(policy)
 
 
+	def back_prop(node, win):
+		parent = node.parent
+		node.update_score()
+		while not parent is None:
+			parent.update_score()
 
-	def full_alpha_beta(node, alpha, beta, depth, max_depth, maximising_player):
-		if depth == max_depth:
-			node.score = score(node)
-			return node
-		if not node.subnodes:
-			node.expand()
-
-		elif maxmising_player:
-			value = Node(node.game, None, 0, -1 * float("inf"), get_moves=node.get_moves, make_move=node.make_move)
-			for node_ in node.subnodes:	
-				value = max_node(value, full_alpha_beta(node_, alpha, beta, depth + 1, max_depth, False))
-				alpha = max_node(alpha, value)
-				if beta =< alpha:
-					break
-			return value
-		else:
-			value = Node(node.game, 0, float("inf"), get_moves=node.get_moves, make_move=node.make_move)
-			for node_ in node.subnodes:
-				value = min_node(value, full_alpha_beta(node_, alpha, beta, depth + 1, max_depth, True)
-				beta = min_node(value, beta)
-				if beta =< alpha:
-					break
-			return value
-
-
-	def best_alpha_beta(node, alpha, beta, depth, max_depth, maximising_player, count):
-		if depth == max_depth:
-			node.score = score(node)
-			return node
-		if not node.subnode:
-			node.expand()
-		elif maxmising_player:
-			value = Node(node.game, None, 0, -1 * float("inf"), get_moves=node.get_moves, make_move=node.make_move)
-			for node_ in sorted(node.subnodes, key=lambda x:x.score)[:count]:	
-				value = max_node(value, full_alpha_beta(node_, alpha, beta, depth + 1, max_depth, False))
-				alpha = max_node(alpha, value)
-				if beta =< alpha:
-					break
-			return value
-		else:
-			value = Node(node.game, 0, float("inf"), get_moves=node.get_moves, make_move=node.make_move)
-			for node_ in sorted(node.subnodes, key=lamda x:x.score)[-1:-count:-1]:
-				value = min_node(value, full_alpha_beta(node_, alpha, beta, depth + 1, max_depth, True)
-				beta = min_node(value, beta)
-				if beta =< alpha:
-					break
-			return value
-
-	def minmax(node, depth, max_depth, maximising):
-		if depth == max_depth:
-			node.score = score(node)
-			return node
-		if not node.subnodes:node.expand()
-		if maximising:
-			value = node.subnodes[0]
-			for node_ in node.subnodes[1:]:
-				value = max_node(value, minmax(node_, depth +1, max_depth, False))
-			return value
-		else:
-			value = node.subnodes[0]:
-			for node_ in node.subnodes[1:]
-				value = min_node(value, minmax(node_, depth + 1, max_depth, True))
-			return value

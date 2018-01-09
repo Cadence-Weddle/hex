@@ -1,5 +1,3 @@
-
-
 def iter_flatten(iterable):
 	it = iter(iterable)
 	for e in it:
@@ -36,7 +34,7 @@ class Node:
 
 	Methods:
 		__init__ := default constructor
-		sort_subnodes(func) := Returns a list of subnodes which has been sorted according to func
+		sort_subnodes(func) := Returns a list of subnodes which has been sorted according terminal_node func
 		expand() := Generates all nodes which can be reached by making 1 move and assigns that list to self.subnodes
 		convert_to_root(moves) := Converts this node to a root node. Moves is the amount of moves it takes to do this (defaults to 1)
 
@@ -48,7 +46,8 @@ class Node:
 	self.depth = depth
 	self.make_move = make_move
 	self.get_moves = get_moves
-	self.visit_count = 1
+	self.visit_count = 0
+	self.wins = 0
 
 	#Checking inputs
 	try:		
@@ -59,19 +58,16 @@ class Node:
 	except:
 		raise TypeError
 
-	def sort_subnodes(self,func=score):
-		return sorted(self.subnodes, key=func)
-
-	def add_subnode(self,node, sort=True):
+	def add_subnode(self,node):
 		self.subnodes.append(node)
-		if sort:
-			self.subnodes = self.sort_subnodes()
 
 	def expand(self):
 		game = self.game
 		moves = getattr(game, self.get_moves)()
 		for move in moves:
-			self.add_subnode(Node(getattr(game, self.make_move)(move), self, self.depth + 1, get_moves=self.get_moves, make_move=self.make_move), sort=False)
+			temp_game = game
+			getattr(temp_, self.make_move)(move)
+			self.add_subnode(Node(temp_game, self, self.depth + 1, get_moves=self.get_moves, make_move=self.make_move))
 		return self.subnodes
 
 	def convert_to_root(self, moves=1):
@@ -84,8 +80,8 @@ class Node:
 			for node in self.subnodes:
 				node.update_depth(thing)
 
-class Tree:
 
+class Tree:
 	def __init__(self, game, **kwargs):
 		self.game = game
 		self.root_node = Node(game, None, 0, get_moves=kwargs.get("get_valid_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move"))
