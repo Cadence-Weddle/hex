@@ -14,7 +14,7 @@ from keras.optimizers import SGD
 
 
 class NeuralNetwork:
-    def __init__(self, resid_num_iter=15, input_shape=(11,11,3)):
+    def __init__(self, resid_num_iter=15, input_shape=(11,11,)):
     	#Layer 0 of input is all p1 pos 
     	#Layer 1 of input is all p2 pos
     	#Layer 2 is who's moving
@@ -66,7 +66,7 @@ class NeuralNetwork:
         self.value_output = value_head(self.x)
 
         self.model = Model(inputs=[self.input_data], outputs=[self.policy_output, self.value_output])
-
+        self.input_shape = input_shape
 
     def plot_model(self, fp='model.png'):
         plot_model(self.model, to_file=fp)
@@ -77,8 +77,13 @@ class NeuralNetwork:
             board.reshape(11,11,3)
         return model.predict(board) #Probably won't work, I likely need to format the data. 
 
+    def predict_batch(batch):
+        if batch[0].shape != self.input_shape:
+            for x in batch:x.reshape((11,11))
+        return self.model.predict(batch, batch_size=len(batch))
 
-    def train_model(self, data, optimiser=SGD(), batch_size=50, epochs=20):
+
+    def train_model(self, data, optimiser=SGD(), batch_size=50, epochs=20, **kwargs):
         model = self.model
         x, y = data[0], data[1]
         try:
@@ -89,8 +94,3 @@ class NeuralNetwork:
         model.compile(optimizer=optimiser, loss=kwargs.get("loss", "categorical_crossentropy"), metrics=["accuracy"])
         model.fit(x, y, batch_size=len(x))
         return model
-
-
-if __name__ == "__main__":
-    My_model = NeuralNetwork()
-    My_model.plot_model(fp='model_architecture.svg')

@@ -70,15 +70,9 @@ class Node:
 			self.add_subnode(Node(temp_game, self, self.depth + 1, get_moves=self.get_moves, make_move=self.make_move))
 		return self.subnodes
 
-	def convert_to_root(self, moves=1):
+	def convert_to_root(self):
 		self.parent = None
-		self.update_depth(moves)
 
-	def update_depth(self, thing):
-		self.depth -= thing
-		if not self.subnodes:
-			for node in self.subnodes:
-				node.update_depth(thing)
 
 
 class Tree:
