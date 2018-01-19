@@ -18,3 +18,9 @@ def UCB1(node,constant):
 
 
 def UCT(node,constant):
+	""" 
+
+	"""
+	return node.value / node.visits + constant * sqrt(log(node.parent.visits) / node.visits)
+
+	
