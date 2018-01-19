@@ -1,9 +1,8 @@
 from GameTree import Tree, Node, max_node, min_node
 from Heuristic import score
-from AlphaBeta import *
 import tensorflow as tf
 import numpy as np
-from scores import 
+from scores import *
 
 def policy_wrapper(NeuralNetwork, device="/cpu:0"):
 	def func(game):
