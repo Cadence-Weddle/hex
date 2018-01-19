@@ -43,7 +43,7 @@ class  MCTS_Node(Node):
 		if type(node) != MCTS_Node:
 				raise TypeError('MCTS Node Score can only be computed for said type')
 		
-		return 
+		return method(node,exploration_constant)
 
 
 	def update_score(self):

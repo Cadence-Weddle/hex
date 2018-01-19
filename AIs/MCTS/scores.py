@@ -1,18 +1,20 @@
-from MonteCarloTreeSearchImport
+from MonteCarloTreeSearch import Node
 
 
-def PUCT(node):
-	"""Variant of PUCT algorithm"""
+def PUCT(node,constant):
+	"""Variant of PUCT algorithm
+	   where cpuct is a constant determining the level of exploration; this search control
+	   strategy initially prefers actions with high prior probability and low visit count, but
+	   asympotically prefers actions with high action value"""
 
-	"""where cpuct is a constant determining the level of exploration; this search control
-		strategy initially prefers actions with high prior probability and low visit count, but
-		asympotically prefers actions with high action value"""
-		#U(s,a) = c_puct*P(s,a)*(sqrt(sum_over_b(N(s,b))))/1+N(s,a)
+	return constant*node.prior_probability*((sum(???))**(1/2))/(1+node.visit_count)
 
 
 
-def UCB1(node):
+
+def UCB1(node,constant):
+
 	
 
 
-def UCT(node):
+def UCT(node,constant):
