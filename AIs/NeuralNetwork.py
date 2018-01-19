@@ -14,7 +14,11 @@ from keras.optimizers import SGD
 
 
 class NeuralNetwork:
-    def __init__(self, resid_num_iter=15, input_shape=(11,11,1)):
+    def __init__(self, resid_num_iter=15, input_shape=(11,11,3)):
+    	#Layer 0 of input is all p1 pos 
+    	#Layer 1 of input is all p2 pos
+    	#Layer 2 is who's moving
+
         def residual_section(model):
             output = Conv2D(256, (3, 3), padding='same')(model)
             output = BatchNormalization()(output)
@@ -65,16 +69,16 @@ class NeuralNetwork:
 
 
     def plot_model(self, fp='model.png'):
-        plot_model(self.NeuralNetworkModel, to_file=fp)
+        plot_model(self.model, to_file=fp)
 
     def predict(board):
         shape=board.shape
-        if shape != (11,11,1):
-            board.reshape(11,11,1)
+        if shape != (11,11,3):
+            board.reshape(11,11,3)
         return model.predict(board) #Probably won't work, I likely need to format the data. 
 
 
-     def train_model(self, data, optimiser=SGD(), batch_size=50 epochs=20):
+    def train_model(self, data, optimiser=SGD(), batch_size=50, epochs=20):
         model = self.model
         x, y = data[0], data[1]
         try:

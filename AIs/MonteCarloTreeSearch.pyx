@@ -3,7 +3,6 @@ from Heuristic import score
 from AlphaBeta import *
 import tensorflow as tf
 import numpy as np
-from scores import 
 
 def policy_wrapper(NeuralNetwork, device="/cpu:0"):
 	def func(game):
@@ -18,34 +17,22 @@ def policy_wrapper(NeuralNetwork, device="/cpu:0"):
 
 class  MCTS_Node(Node):
 	"""docstring for  MCTS_Node"""
-	def __init__(self, game, parent, value, score, get_moves="get_valid_moves", make_move="make_move"):
+	def __init__(self, game, parent, value, score=0, get_moves="get_valid_moves", make_move="make_move"):
 		Node.__init__(game, parent, get_moves=get_moves, make_move=make_move)
 
 		#Section Reinforcement in AlphaGo Zero Page 255, Nature Vol 550
-		self.visit_count = 0        # N(s,a)
-		self.total_action_value = 0 # W(s,a)
-		self.mean_action value = 0  # Q(s,a)
-		
-		if self.parent is None: # Root node must be intialized 100% probablity
-			self.prior_probability = 1
-		self.prior_probability = self.parent.prior_probability # P(s,a)
-
-
+		self.visits = 0 # N(s,a)
 		self.expanded = False
 		self.score = 0
-		self.move_prob = 0
+		self.move_prob = 0 #P(s,a)
 		self.value = value #Value head of network evalutaion, different from score.
 		self.sim_subnodes = []
 
 	@staticmethod
-	def _compute_score(node,method=PUCT, exploration_constant=1): # U(s,a)
-
-
+	def _compute_score(node):
 		if type(node) != MCTS_Node:
 				raise TypeError('MCTS Node Score can only be computed for said type')
-		
-		return 
-
+		return ((np.mean([node.score for node in self.sim_subnodes]) + self.value) / (1 + self.visits)) #As per original alphago paper. 
 
 	def update_score(self):
 		self.score = _compute_score(self)
