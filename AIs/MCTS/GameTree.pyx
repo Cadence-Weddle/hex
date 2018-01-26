@@ -21,7 +21,7 @@ def min_node(*args):
 	return curr_min
 
 class Node:
-	def __init__(self, game, parent, int depth, float score=0, get_moves="get_valid_moves", make_move="make_move"):
+	def __init__(self, game, parent, get_moves="get_valid_moves", make_move="make_move"):
 		'''
 	Args:
 		self := Class instance
@@ -42,12 +42,10 @@ class Node:
 	self.parent = parent
 	self.game = game
 	self.subnodes = []
-	self.score = score
-	self.depth = depth
+	self.score = 0
 	self.make_move = make_move
 	self.get_moves = get_moves
-	self.visit_count = 0
-	self.wins = 0
+
 
 	#Checking inputs
 	try:		
@@ -61,7 +59,7 @@ class Node:
 	def add_subnode(self,node):
 		self.subnodes.append(node)
 
-	def expand(self):
+	def expand_node(self):
 		game = self.game
 		moves = getattr(game, self.get_moves)()
 		for move in moves:
@@ -75,35 +73,15 @@ class Node:
 
 
 
+
 class Tree:
 	def __init__(self, game, **kwargs):
 		self.game = game
 		self.root_node = Node(game, None, 0, get_moves=kwargs.get("get_valid_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move"))
-		self.terminal_nodes = self.root_node.subnodes
-
-
-	def next_layer(self):
-		nodes = []
-		for node in self.terminal_nodes:
-			nodes.append(self.expand_node(node, add_to_terminal_nodes=False))
-		nodes = [i for i in iter_flatten(nodes)]
-		self.terminal_nodes = nodes
-		self.depth += 1
-		return list(set(nodes))
-
-	def expand_node(self, node, add_to_terminal_nodes=True):
-		nodes = node.expand()
-		if add_to_terminal_nodes:	
-			index = [i for i, x in enumerate(self.terminal_nodes) if x == node][0]
-			self.terminal_nodes.pop(index)
-			self.terminal_nodes = [i for i in iter_flatten(self.terminal_nodes.append(nodes))]
-		return nodes
 
 	def update_root_node(self, new_root_node):
 		self.root_node = new_root_node
-		self.root_node.update_depth(1)
-		self.depth -= 1
-		self.root_node.update_depth(1)
+		self.root_node.convert_to_root()
 	
 
 

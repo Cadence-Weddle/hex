@@ -21,6 +21,6 @@ def UCT(node,constant):
 	""" 
 
 	"""
-	return node.value / node.visits + constant * sqrt(log(node.parent.visits) / node.visits)
+	return node.value / node._count + constant * sqrt(log(node.parent.visit_count) / node.visit_count)
 
 	
