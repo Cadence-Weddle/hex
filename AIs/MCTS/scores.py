@@ -1,3 +1,5 @@
+#rewrite in c
+#It will be used very frequantly. 
 from MonteCarloTreeSearch import Node
 
 

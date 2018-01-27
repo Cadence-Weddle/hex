@@ -13,7 +13,7 @@ class Not_Proccessed:
 	pass
 
 
-def Neural_Network_Batch_Processer:
+class Neural_Network_Batch_Processer:
 	"""
 	For storing and proccessing data in bulk. Also functions as a cache---Stores the evaluated boards and doesn't recompute them if a different node with the same board is requested. 
 	"""
@@ -67,7 +67,7 @@ class  MCTS_Node(Node):
 		return method(node,exploration_constant)
 
 	def update_score(self):
-		if not self.score	
+		if not self.score:
 			self.score = MCTS_Node._compute_score(self, self.evaluation_function)
 		self.mean_action_value = (sum(self.subnodes) + self.score) / (len(self.subnodes) + 1) #Probably need to change---Just avereges the nn value with the values of the subnodes. 
 	
