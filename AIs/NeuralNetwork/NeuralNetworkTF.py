@@ -11,11 +11,8 @@ def Activation(type_):
     return lambda x:getattr(tf.nn, type_)(x)
 
 def Dense(output_shape):
-    def output(x, output_shape=tuple([output_shape])):
-        bias = tf.Variable(tf.truncated_normal(stddev=0.1, shape=output_shape)) #This needs to be redone
-        shape = (x.shape[0], output_shape[1])                                   #Shape is not right
-        weight = tf.Variable(tf.truncated_normal(stddev=0.1, shape=shape))      #====================== 
-        return tf.matmul(x, weight) + bias
+    def output(x, output_shape=output_shape):
+        return tf.layers.dense(x, output_shape)
     return output
 
 def Input(shape):
@@ -60,7 +57,7 @@ class NeuralNetwork:
             output = Dense(1)(output)
             output = Activation('tanh')(output)
             return output
-
+        self.device = device
         self.resid_num_iter = resid_num_iter
 
         self.input_data = Input(shape=input_shape)
@@ -73,9 +70,9 @@ class NeuralNetwork:
         self.policy = policy_head(self.x)
         self.value  = value_head(self.x)
 
-        self.model = tf.concat(self.policy, self.value)
+        self.model = None #To be implmented. Probably need "tf.stack" or "tf.concat" but I am not sure and don't want to deal with it.
 
-    def eval(boards, model="model"): # "model" refers to either the policy head, the value head, or both combined. 
+    def eval(self, boards, model="model"): # "model" refers to either the policy head, the value head, or both combined. 
         with tf.device(self.device) as device:    
             with tf.Session() as sess:
                 return sess.run(getattr(self, model), feed_dict={self.input_data : boards})
