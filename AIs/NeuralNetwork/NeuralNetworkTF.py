@@ -1,25 +1,25 @@
 import tensorflow as tf
 
-def Conv2D(out_channels, filter_shape, padding):
-    filter = tf.Variable(shape=(1) + shape + (out_channels))
-    return lambda x: tf.nn.conv2d(x, filter, strides=[1,1,1,1], padding=padding)
+def Conv2D(model, out_channels, filter_shape, padding):
+    filter = tf.Variable(tf.truncated_normal(shape=filter_shape + tuple([model.shape[3].value]) + tuple([out_channels]))) #Possibly move tf.cast elsewhere, it may take up extra resources. 
+    return tf.nn.conv2d(model, filter, strides=[1,1,1,1], padding=padding)
 
 def BatchNormalisation():
-    return lambda x: tf.nn.batch_normalization(x, ???)
+    return lambda x: tf.nn.batch_normalization(x, 0, 1, 0.001, .99, 0.01) #These numbers are magikkal. I don't know what they should be
 
 def Activation(type_):
     return lambda x:getattr(tf.nn, type_)(x)
 
 def Dense(output_shape):
-    def output(x, output_shape=output_shape):
-        bias = tf.Variable(tf.truncated_normal(stddev=0.1, shape=output_shape))
-        shape = (x.shape[0], output_shape[1])
-        weight = tf.Variable(tf.truncated_normal(stddev=0.1, shape=shape))
+    def output(x, output_shape=tuple([output_shape])):
+        bias = tf.Variable(tf.truncated_normal(stddev=0.1, shape=output_shape)) #This needs to be redone
+        shape = (x.shape[0], output_shape[1])                                   #Shape is not right
+        weight = tf.Variable(tf.truncated_normal(stddev=0.1, shape=shape))      #====================== 
         return tf.matmul(x, weight) + bias
     return output
 
 def Input(shape):
-    return tf.placeholder(shape=(1) + shape)
+    return tf.placeholder(tf.float32, shape=(1,) + shape)
 
 
 class NeuralNetwork:
@@ -29,23 +29,22 @@ class NeuralNetwork:
     	#Layer 2 is who's moving
 
         def residual_section(model):
-            output = Conv2D(121, (3, 3), padding='same')(model)
+            output = Conv2D(model, 121, (3, 3), padding='SAME')
             output = BatchNormalisation()(output)
             output = Activation('relu')(output)
-            output = Conv2D(121, (3, 3), padding='same')(output)
+            output = Conv2D(output, 121, (3, 3), padding='SAME')
             output = BatchNormalisation()(output)
-            output = keras.layers.add([model, output])
             output = Activation('relu')(output)
             return output
 
         def conv_section(model):
-            output = Conv2D(121, (3, 3), padding='same')(model)
+            output = Conv2D(model, 121, (3, 3), padding='SAME')
             output = BatchNormalisation()(output)
             output = Activation('relu')(output)
             return output
 
         def policy_head(model, board_size=11):
-            output = Conv2D(121, (1, 1), padding='same')(model)
+            output = Conv2D(model, 121, (1, 1), padding='SAME')
             output = BatchNormalisation()(output)
             output = Activation('relu')(output)
             output = Dense(121)(output)
@@ -53,7 +52,7 @@ class NeuralNetwork:
             return output
 
         def value_head(model):
-            output = Conv2D(121, (2, 2), padding='same')(model)
+            output = Conv2D(model, 121, (2, 2), padding='SAME')
             output = BatchNormalisation()(output)
             output = Activation('relu')(output)
             output = Dense(121)(output)
@@ -82,10 +81,5 @@ class NeuralNetwork:
                 return sess.run(getattr(self, model), feed_dict={self.input_data : boards})
 
 
-    def train_model(self, data, optimiser=SGD(), batch_size=50, epochs=20):
-        
-
-
-if __name__ == "__main__":
-    My_model = NeuralNetwork()
-    My_model.plot_model(fp='model_architecture.svg')
+    def train_model(self, data, optimiser='sgd', batch_size=50, epochs=20):
+        pass

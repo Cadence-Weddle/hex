@@ -14,29 +14,29 @@ from keras.optimizers import SGD
 
 
 class NeuralNetwork:
-    def __init__(self, resid_num_iter=15, input_shape=(11,11,)):
+    def __init__(self, resid_num_iter=15, input_shape=(11,11,3)):
     	#Layer 0 of input is all p1 pos 
     	#Layer 1 of input is all p2 pos
     	#Layer 2 is who's moving
 
         def residual_section(model):
-            output = Conv2D(256, (3, 3), padding='same')(model)
+            output = Conv2D(121, (3, 3,), padding='same', data_format=(None, 11,11,1))(model)
             output = BatchNormalization()(output)
             output = Activation('relu')(output)
-            output = Conv2D(256, (3, 3), padding='same')(output)
+            output = Conv2D(121, (3, 3,), padding='same')(output)
             output = BatchNormalization()(output)
             output = keras.layers.add([model, output])
             output = Activation('relu')(output)
             return output
 
-        def conv_section(model):
-            output = Conv2D(256, (3, 3), padding='same')(model)
+        def conv_section(model, input_shape):
+            output = Conv2D(121, (3, 3,), padding='same', data_format=input_shape)(model)
             output = BatchNormalization()(output)
             output = Activation('relu')(output)
             return output
 
         def policy_head(model, board_size=11):
-            output = Conv2D(2, (1, 1), padding='same')(model)
+            output = Conv2D(121, (1, 1,), padding='same', data_format=(11,11,1))(model)
             output = BatchNormalization()(output)
             output = Activation('relu')(output)
             output = Dense(board_size ** 2)(output)
@@ -44,10 +44,10 @@ class NeuralNetwork:
             return output
 
         def value_head(model):
-            output = Conv2D(1, (2, 2), padding='same')(model)
+            output = Conv2D(121, (2, 2), padding='same', data_format=(11,11,1))(model)
             output = BatchNormalization()(output)
             output = Activation('relu')(output)
-            output = Dense(256)(output)
+            output = Dense(121)(output)
             output = Activation('relu')(output)
             output = Dense(1)(output)
             output = Activation('tanh')(output)
@@ -57,7 +57,7 @@ class NeuralNetwork:
 
         self.input_data = Input(shape=input_shape)
 
-        self.x = conv_section(self.input_data)
+        self.x = conv_section(self.input_data, input_shape)
 
         for _ in range(self.resid_num_iter):
             self.x = residual_section(self.x)

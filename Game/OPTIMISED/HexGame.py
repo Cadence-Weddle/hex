@@ -102,7 +102,7 @@ class HexGame:
 
     def load_from_log(self, file, gametick):
         raise NotImplemented
-    
+
     def generate_graph(self, values):
             cell_neighbor_weights = (1, 10, 11)  # Negatives are redundant
             graphs = []
@@ -145,4 +145,3 @@ class HexGame:
                 return 2
         else:
             return 0
-

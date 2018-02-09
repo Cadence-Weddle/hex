@@ -1,3 +1,5 @@
+
+
 def iter_flatten(iterable):
 	it = iter(iterable)
 	for e in it:
@@ -22,39 +24,39 @@ def min_node(*args):
 
 class Node:
 	def __init__(self, game, parent, get_moves="get_valid_moves", make_move="make_move"):
-		'''
-	Args:
-		self := Class instance
-		game := Self explanatory
-		parent := Parent node, None if this node is the root node in the tree
-		depth := The depth of the node
-		score := The value of this node: In the case of MCTS the total value of the state
-		get_moves := String of the method name which returns a list of valid moves. This method is an attribute of game
-		make_move := String of the method name which returns a game which has had a move made. This method is an attribute of game
+		"""
+		Args:
+			self := Class instance
+			game := Self explanatory
+			parent := Parent node, None if this node is the root node in the tree
+			depth := The depth of the node
+			score := The value of this node: In the case of MCTS the total value of the state
+			get_moves := String of the method name which returns a list of valid moves. This method is an attribute of game
+			make_move := String of the method name which returns a game which has had a move made. This method is an attribute of game
 
-	Methods:
-		__init__ := default constructor
-		sort_subnodes(func) := Returns a list of subnodes which has been sorted according terminal_node func
-		expand() := Generates all nodes which can be reached by making 1 move and assigns that list to self.subnodes
-		convert_to_root(moves) := Converts this node to a root node. Moves is the amount of moves it takes to do this (defaults to 1)
+		Methods:
+			__init__ := default constructor
+			sort_subnodes(func) := Returns a list of subnodes which has been sorted according terminal_node func
+			expand() := Generates all nodes which can be reached by making 1 move and assigns that list to self.subnodes
+			convert_to_root(moves) := Converts this node to a root node. Moves is the amount of moves it takes to do this (defaults to 1)
 
-		'''
-	self.parent = parent
-	self.game = game
-	self.subnodes = []
-	self.score = 0
-	self.make_move = make_move
-	self.get_moves = get_moves
+		"""
+		self.parent = parent
+		self.game = game
+		self.subnodes = []
+		self.score = 0
+		self.make_move = make_move
+		self.get_moves = get_moves
 
 
-	#Checking inputs
-	try:		
-		game = self.game
-		assert type(parent) in (Node, None)
-		getattr(game, self.get_moves)
-		getattr(game, self.make_move)
-	except:
-		raise TypeError
+		#Checking inputs
+		try:		
+			game = self.game
+			assert type(parent) in (Node, None)
+			getattr(game, self.get_moves)
+			getattr(game, self.make_move)
+		except:
+			raise TypeError
 
 	def add_subnode(self,node):
 		self.subnodes.append(node)

@@ -1,4 +1,4 @@
-from GameTree import Tree, Node, max_node, min_node
+from GameTree import *
 from scores import *
 from copy import deepcopy as copy
 
@@ -93,7 +93,7 @@ class  MCTS_Node(Node):
 		return subnodes
 
 
-class MonteCarloSearch(Tree):
+class MonteCarloTreeSearch(Tree):
 	def __init__(game, model, **kwargs):
 		Tree.__init__(game, root_node=MCTS_Node(game, None, processer=self.batch_processer, get_moves=kwargs.get("get_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move")))
 		self.game = game
