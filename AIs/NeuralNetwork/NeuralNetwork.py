@@ -1,25 +1,20 @@
 import tensorflow as tf
 import keras
 from keras.layers import Activation, BatchNormalization, Conv2D, Input, Dense
-'''
-from keras.layers import BatchNormalization
-from keras.layers import Conv2D
-from keras.layers import Input
-from keras.layers import Dense
-'''
-from keras.models import Model
 from keras.utils import plot_model
 from keras.optimizers import SGD
 
 
 
 class NeuralNetwork:
-    def __init__(self, resid_num_iter=15, input_shape=(11,11,3)):
-    	#Layer 0 of input is all p1 pos 
-    	#Layer 1 of input is all p2 pos
-    	#Layer 2 is who's moving
-
-        def residual_section(model):
+    def __init__(self, resid_num_iter=10, input_shape=(11,11,3)):
+        #Layer 0 of input is all p1 pos 
+        #Layer 1 of input is all p2 pos
+        #Layer 2 is who's moving
+        
+        self.resid_num_iter = resid_num_iter        
+    	
+        def addd_residual_section(model):
             output = Conv2D(121, (3, 3,), padding='same', data_format=(None, 11,11,1))(model)
             output = BatchNormalization()(output)
             output = Activation('relu')(output)
@@ -29,13 +24,13 @@ class NeuralNetwork:
             output = Activation('relu')(output)
             return output
 
-        def conv_section(model, input_shape):
+        def add_conv_section(model, input_shape):
             output = Conv2D(121, (3, 3,), padding='same', data_format=input_shape)(model)
             output = BatchNormalization()(output)
             output = Activation('relu')(output)
             return output
 
-        def policy_head(model, board_size=11):
+        def add_policy_head(model, board_size=11):
             output = Conv2D(121, (1, 1,), padding='same', data_format=(11,11,1))(model)
             output = BatchNormalization()(output)
             output = Activation('relu')(output)
@@ -43,7 +38,7 @@ class NeuralNetwork:
             output = Activation('sigmoid')(output)
             return output
 
-        def value_head(model):
+        def add_value_head(model):
             output = Conv2D(121, (2, 2), padding='same', data_format=(11,11,1))(model)
             output = BatchNormalization()(output)
             output = Activation('relu')(output)
@@ -53,29 +48,42 @@ class NeuralNetwork:
             output = Activation('tanh')(output)
             return output
 
-        self.resid_num_iter = resid_num_iter
+        self.input_layer = Input(shape=input_shape)
 
-        self.input_data = Input(shape=input_shape)
+        self.model_layers = add_conv_section(self.input_layer, input_shape)
 
-        self.x = conv_section(self.input_data, input_shape)
+
 
         for _ in range(self.resid_num_iter):
-            self.x = residual_section(self.x)
+            self.model_layers = add_residual_section(self.model_layers)
 
-        self.policy_output = policy_head(self.x)
-        self.value_output = value_head(self.x)
+        self.policy_output = add_policy_head(self.model_layers)
+        self.value_output = add_value_head(self.model_layers)
 
-        self.model = Model(inputs=[self.input_data], outputs=[self.policy_output, self.value_output])
+        self.model = Model(inputs=[self.input_layer], outputs=[self.policy_output, self.value_output])
         self.input_shape = input_shape
+
+
+
+
+
+
 
     def plot_model(self, fp='model.png'):
         plot_model(self.model, to_file=fp)
 
-    def predict(board):
+    def foward_prop(object):
         shape=board.shape
         if shape != (11,11,3):
             board.reshape(11,11,3)
         return model.predict(board) #Probably won't work, I likely need to format the data. 
+
+    def propogate_policy_head():
+        return None
+
+
+    def propogate_value_head():
+        return None
 
     def predict_batch(batch):
         if batch[0].shape != self.input_shape:
