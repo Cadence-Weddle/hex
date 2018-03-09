@@ -17,12 +17,12 @@ class Neural_Network_Batch_Processer:
 	"""
 	For storing and proccessing data in bulk. Also functions as a cache---Stores the evaluated boards and doesn't recompute them if a different node with the same board is requested. 
 	"""
-	def __init__(model, max_batch_size=121):
+	def __init__(self, model, max_batch_size=121):
 		self.queue = []
 		self.max_batch_size = max_batch_size
 		self.return_dict = {x.game.board : Not_Proccessed() for x in self.queue}
 	def run_batch(self):
-		outs = self.model.predict_batch([x.game.board for x in self.queue])
+		outs = self.model.foward_prop([x.game.board for x in self.queue])
 		for x, i in enumerate(self.queue):
 			self.return_dict[i.game.board] = outs[x]
 
@@ -44,7 +44,7 @@ class Neural_Network_Batch_Processer:
 class  MCTS_Node(Node):
 	"""docstring for  MCTS_Node"""
 	def __init__(self, game, parent, processer, get_moves="get_valid_moves", make_move="make_move"):
-		Node.__init__(game, parent, get_moves=get_moves, make_move=make_move)
+		super().__init__(game, parent, get_moves=get_moves, make_move=make_move)
 
 		#Section Reinforcement in AlphaGo Zero Page 255, Nature Vol 550
 		self.visit_count = 0        # N(s,a)
@@ -94,10 +94,10 @@ class  MCTS_Node(Node):
 
 
 class MonteCarloTreeSearch(Tree):
-	def __init__(game, model, **kwargs):
-		Tree.__init__(game, root_node=MCTS_Node(game, None, processer=self.batch_processer, get_moves=kwargs.get("get_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move")))
+	def __init__(self, game, model, **kwargs):
 		self.game = game
 		self.batch_processer = Neural_Network_Batch_Processer(model)
+		super().__init__(game, root_node=MCTS_Node(game, None, self.batch_processer, "get_valid_moves", "make_move"))#kwargs.get("get_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move")))
 
 	def select(self):
 		curr_node = self.root_node

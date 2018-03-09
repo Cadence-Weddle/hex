@@ -2,13 +2,14 @@ import numpy as np
 import random
 from time import time
 import math
+from copy import deepcopy as dcopy
 # Player 1 goes from top to bottom
 # Player 2 goes from right to left
 
 
 class HexGame:
-    blank_board = np.zeros(121)
-    default_players = [[1, "Player 1"], [2, "Player 2"]]
+    blank_board = np.zeros([1, 11, 11,  2])
+    default_players = [[1, "Player 1"], [-1, "Player 2"]]
     default_starting_player = 0  # 0 for p1, 1 for p2
     default_state = 0
     default_log = True
@@ -20,7 +21,7 @@ class HexGame:
                  players=default_players,
                  log=default_log,
                  gameid =random_game_ID, winner_state=default_winner_state,
-                 starting_player=default_starting_player):
+                 starting_player=default_starting_player, **board_shape):
         try:
             self.gametick = gametick
             self.board = board
@@ -52,10 +53,15 @@ class HexGame:
         self.gametick += value
 
     def set_game_tick(self, value):
-        self.gametick = value
+        self.gametick = values
+    def get_valid_moves(self):
+        #MORE EFFECINCIES
+        temp = dcopy(self.board)[0]
+        board = temp[:11, :11, 0] + temp[:11, :11, 1]
+        board = board.reshape(121)
+        return [x for x, y in enumerate(board) if y == 0]
 
     def make_move(self, position):
-        # Positions Start Counting From 1
         if self.board[position] == 0:
             np.put(self.board, position, self.players[self.gametick % 2+self.starting_player][0])
             self.gametick += 1

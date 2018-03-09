@@ -50,11 +50,11 @@ class Node:
 		#Checking inputs
 		try:		
 			game = self.game
-			assert type(parent) in (Node, None)
+			assert type(parent) in (Node, None, type(self))
 			getattr(game, self.get_moves)
 			getattr(game, self.make_move)
 		except:
-			raise TypeError
+			print("An error")
 
 	def add_subnode(self,node):
 		self.subnodes.append(node)
@@ -73,10 +73,12 @@ class Node:
 
 
 class Tree:
-	def __init__(self, game, **kwargs):
+	def __init__(self, game, root_node=None, **kwargs):
 		self.game = game
-		self.root_node = Node(game, None, 0, get_moves=kwargs.get("get_valid_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move"))
-
+		if not root_node:
+			self.root_node = Node(game, None, 0)
+		else:
+			self.root_node = root_node
 	def update_root_node(self, new_root_node):
 		self.root_node = new_root_node
 		self.root_node.convert_to_root()
@@ -85,3 +87,4 @@ class Tree:
 
 
 
+#self.root_node = kwargs.get('root_node', Node(game, None, 0, get_moves=kwargs.get("get_valid_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move")))

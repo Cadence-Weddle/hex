@@ -1,5 +1,4 @@
 
-
 def iter_flatten(iterable):
 	it = iter(iterable)
 	for e in it:
@@ -52,7 +51,7 @@ class Node:
 		#Checking inputs
 		try:		
 			game = self.game
-			assert type(parent) in (Node, None)
+			assert type(parent) in (Node, None, type(self))
 			getattr(game, self.get_moves)
 			getattr(game, self.make_move)
 		except:

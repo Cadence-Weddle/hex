@@ -93,34 +93,35 @@ class NeuralNetwork:
 
         If multiple values:
         Returns a list of dictonaries that follow the same scheme as single valued
-        '''
+        
         _reshaped = False
         print(len(data.shape))
         if len(data.shape)==3:
             _reshaped = True
             data = data.reshape((1,)+data.shape)
             output_data = self.model.predict(data)
+            return output_data[0][0], output_data[1][0][0]
+           
             return {'policy':output_data[0][0],
                     'policy_argmax':np.argmax(output_data[0][0]),
                     'value':output_data[1][0][0],
                     'reshaped':_reshaped}
+        '''
 
-
-        if len(data.shape)==4:
-            #This could be made more efficent
-            output_data = self.model.predict(data)
-
-            iterator = range(len(output_data[0]))
-            policies = [output_data[0][i] for i in iterator]
-            policies_argmax = [np.argmax(output_data[0][i]) for i in iterator]
-            values = [output_data[1][i][0] for i in iterator]
-            
+        #if len(data.shape)==4:
+        #This could be made more efficent
+        output_data = self.model.predict(data)
+        iterator = range(len(output_data[0]))
+        policies = [output_data[0][i] for i in iterator]
+        #        policies_argmax = [np.argmax(output_data[0][i]) for i in iterator]
+        values = [output_data[1][i][0] for i in iterator]
+        """
             return [{'policy':policies[i],
                     'policy_argmax':policies_argmax[i],
                     'value':values[i],
                     'reshaped':_reshaped} for i in iterator]
-
-            return None
+            """
+        
 
 
     def train_model(self, input_data, value_output_data, policy_output_data, epochs=5,batch_size=32):
