@@ -1,0 +1,71 @@
+body {
+    margin: 1;
+}
+
+.pure-form {
+    font-family: 'Open Sans', sans-serif;
+
+}
+
+canvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  background:url(CanvasBackground.png);}
+
+}
+
+.pure-g [class *= "pure-u"] {
+    /* Set your content font stack here: */
+        font-family: 'Open Sans', sans-serif;
+}
+
+.pure-radio{
+    /* Set your content font stack here: */
+        font-family: 'Open Sans', sans-serif;
+}
+
+input.slider{
+    -webkit-appearance: none;
+
+	margin:auto;
+	width: 90%;
+    height: 10px;
+    border-radius: 25px;   
+    background: #dfdfdf;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+	 }
+
+input.slider:hover {
+    opacity: 1;
+}
+
+
+
+input.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #444444;
+    cursor: pointer;
+}
+
+input.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #444444;
+    cursor: pointer;
+}
+
+.pure-button.pure-button-primary {
+    font-family: 'Open Sans', sans-serif;
+
+}

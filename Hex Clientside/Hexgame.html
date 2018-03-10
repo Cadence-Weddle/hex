@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hex AI Game Visualization</title>
+<meta name="viewport" charset="utf-8" content="width=device-width, initial-scale=1.0 , minimum-scale=1.0 , maximum-scale=1.0" >
+<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+<link rel="stylesheet" href="ExtraStyles.css"></style>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+</head>
+<body onload="initialize()" onresize="Resize_Canvas()">
+	<div class=pure-g>
+		<div class= pure-u-4-24></div> 
+		<div class= pure-u-16-24 id="CentralColumn"> 
+			<div id="description">
+				<h1>Hex AI Game Visualization:</h1>
+				<b>By Jonathan Zhou and Cadence Weddle</b>
+				<h2>How to Play</h2>
+				<p>
+					<ul>
+						<li>Each player has an allocated color, Red and Blue. You can choose your player in the settings below.</li>
+						<li>Players take turns placing a stone of their color on a single cell within the overall playing board.</li>
+						<li>The goal for each player is to form a connected path of their own stones linking the opposing sides of the board marked by their colors, before their opponent connects his or her sides in a similar fashion.</li>
+						<li>The first player to complete his or her connection wins the game. The four corner squares each belong to both adjacent sides.</li>
+						<li>In this game, you will be playing against a software algorithm based on <a href="en.wikipedia.org/wiki/Monte_Carlo_tree_search" target="_blank">Monte Carlo Tree Search</a> and <a href=":en.wikipedia.org/wiki/Deep_learning#Deep_neural_networks" target="_blank">Deep Neural Networks</a> from the paper <a href="Mastering the game of Go without human knowledge.pdf" target="_blank">Mastering the game of Go without human knowledge</a> by the <a href="https://deepmind.com/" target="_blank">Google DeepMind Team</a> which beat Lee Sedol at Go in 2016.</li>
+						<li>To start, choose which player you want to be, select an amount for compute time and click the start button.</li>
+						<li>Compute time can be adjusted during the game and is the time the computer will spend on tree search.</li>
+					</ul>
+				</p>
+			</div>
+
+			<div id="Settings">
+				<h2>Settings</h2>
+					<div class="pure-form pure-g">
+						<div class="pure-u-6-24">
+							<fieldset>
+								<legend><b>I am...</b></legend>
+
+								<label for="Player1" class="pure-radio">
+									<input id="Player1" type="radio" name="PlayerSelection" id=PlayerSelectionRadioButtons value=1 checked>
+									Player One <font color=red>◼</font>
+								</label>
+
+								<label for="Player2" class="pure-radio">
+									<input id="Player2" type="radio" name="PlayerSelection" value=2>
+									Player Two <font color=blue>◼</font>
+								</label>
+							</fieldset>
+						</div>
+						<div class="pure-u-1-24"></div>
+						<div class="pure-u-12-24">
+							<fieldset>
+								<legend><b>AI Compute Time</b></legend>
+								<div class = "pure-g">
+									<div class="pure-u-17-24">
+										  <p><center><input type="range" min="500" max="5000" value="1000" class="slider" id="CTSlider"></center></p>
+									</div>
+									<div class="pure-u-7-24">
+										<p><center><span id="CTDisp"></span>ms</center></p>
+									</div>
+							</div>
+
+							</fieldset>
+						</div>
+					<div class="pure-u-1-24"></div>
+					<div class="pure-u-4-24">
+						<fieldset>
+							<legend><b>Start</b></legend>
+							<button id="startgamebutton" class="pure-button pure-button-primary" onclick="startgame()">Go</button>
+						</fieldset>
+					</div>
+
+				</div>
+			</div>
+			<!--Render after other elements-->
+			<script src="Hexgame_Canvas_Interface.js"></script>
+
+		<div class= pure-u-4-24></div>
+
+	</div>
+</body>
+</html>
