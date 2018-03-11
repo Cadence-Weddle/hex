@@ -1,4 +1,7 @@
 from flask import Flask,render_template, request, jsonify
+from AI.Controller import MakeMove
+import time
+
 app = Flask(__name__)
 
 @app.route("/")
@@ -8,10 +11,12 @@ def hexgame():
 @app.route('/_processrequest', methods=['GET', 'POST'])
 def processrequest():
 	indata = request.get_json()
-	print(indata['computetime'])
+	print(indata,time.time())
 
-	
-	return jsonify(moveloc=95,gamestate=0)
+	output =  MakeMove(computetime = indata['computetime'],board = indata['board'], humanplayer = indata['humanplayer'])
+	print(output,time.time())
+
+	return jsonify(**output)
 
 if __name__ == "__main__":
 	app.run(port=80)
