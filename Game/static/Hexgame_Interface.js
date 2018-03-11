@@ -9,7 +9,6 @@
 
                 HexData = BlankHexData
                 HexBoard = hexmapper(HexData['board']);
-                console.log(HexBoard);  
                 HexGameArea.start();}
 
             //Will be dynamically Adjustable in the future.
@@ -29,12 +28,63 @@
 
             //Player Selection must be made before the first move
             var GameStart = false
+            var HasGameReachedTerminalState = false
             var humanplayer = 1
 
             function sendAJAXRequest(board,computetime,humanplayer) {
-                //do not implemented stuffs
-                console.log("Sent Request to Server:\n Board:",board,"\nComputetime:",computetime,"\nHumanplayer",humanplayer)
-                //ReadyToSend=True
+                document.getElementById("status").innerHTML = 'Request is being sent to server...'
+                var xhr = new XMLHttpRequest();
+
+                
+                xhr.open('POST', '/_processrequest', true);
+               
+
+                xhr.onprogress = function(){
+                     console.log('Loading in progress... ');
+                     document.getElementById("status").innerHTML = 'Your move is being processed...'
+                }
+                
+                xhr.onload = function(){
+                    if(this.status == 200){
+                        var ServerOutput = JSON.parse(this.responseText);
+                        console.log(ServerOutput);
+                        if (ServerOutput['gamestate']==0) {
+                            HexBoard[ServerOutput['moveloc']].player = Number(!(humanplayer-1))+1 
+                            document.getElementById('status').innerHTML = 'Waiting for your move...'
+                            ReadyToSend = true                       
+                            }
+                        else{
+                            if (ServerOutput['gamestate']==1 || ServerOutput['gamestate']==2 ) {
+                                if (ServerOutput['gamestate'] == humanplayer){
+                                    document.getElementById('status').innerHTML = 'You Won!. Refresh this page to play again.'
+                                    alert('You Won!\nRefresh this page to play again.')
+                                    HasGameReachedTerminalState=true
+
+                                }
+                                else {
+                                    document.getElementById('status').innerHTML = 'You have lost to the AI.\nRefresh this page to play again.'
+                                    alert('You have lost to the AI.\nRefresh this page to play again.')
+                                    HasGameReachedTerminalState=true
+                                }
+                            }
+                      }
+                    } else if(this.status = 404){
+                      document.getElementById('status').innerHTML = 'Error: Server not Found';
+                    }
+
+                  }
+
+                xhr.onerror = function(){
+                    console.log('Error: Retrying Request...');
+                    sendAJAXRequest(HexData['board'],computetime,humanplayer)
+                }
+
+                var senddata = JSON.stringify({board:board,computetime:computetime,humanplayer:humanplayer})
+                
+                xhr.setRequestHeader('Content-type', 'application/json');
+
+                xhr.send(senddata);
+                console.log(senddata)                
             }
 
 
@@ -53,8 +103,10 @@
                         ReadyToSend=false
                         sendAJAXRequest(HexData['board'],computetime,humanplayer)
                         //Send AJAX Request for first move
-                    }}
-
+                    }
+                    else{document.getElementById("status").innerHTML = 'Waiting for your move...'
+                }
+                }
             // Allowed Compute Time in Miliseconds, determined from a slider
             var CTSlider = document.getElementById("CTSlider");
             var CTDisp = document.getElementById("CTDisp");
@@ -133,22 +185,21 @@
                         if (HexBoard[i].clicked()) {
                             console.log("Click Event At ",HexBoard[i].pos, "Value: ",HexBoard[i].player)
 
-                            if (HexBoard[i].player==0 && ReadyToSend==true && GameStart==true) {
+                            if (HexBoard[i].player==0 && ReadyToSend==true && GameStart==true && HasGameReachedTerminalState==false) {
                                 var newboard = HexData['board'];
                                 newboard[HexBoard[i].pos] = humanplayer
                                 console.log("Valid Move","New Board:", newboard,"Ready To Send :", ReadyToSend)
-                                
-
                                 HexBoard[i].player = humanplayer
-
-
                                 ReadyToSend = false
                                 sendAJAXRequest(HexData['board'],computetime,humanplayer)
                             }
                             else {
-                                console.log("Invalid Move:","Ready To Send:",ReadyToSend,"GameStart:",GameStart)
+                                console.log("Invalid Move:","Ready To Send:",ReadyToSend,"GameStart:",GameStart, "Tstate:",HasGameReachedTerminalState)
                                 if (GameStart==false) {
                                     alert('You must start the game before playing')
+                                }
+                                if (HasGameReachedTerminalState==true) {
+                                    alert('You can\'t make a move after the game is over! Refresh to play again.')
                                 }
                             }                            
                         }}}}
