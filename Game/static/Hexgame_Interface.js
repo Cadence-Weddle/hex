@@ -216,7 +216,7 @@
                     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
 
                     //Define Refresh Rate
-                    this.interval = setInterval(RefreshAll, RefreshRate);
+                    this.interval = setInterval(Redraw, RefreshRate);
                     
 
                     //Click Event Handlers
@@ -236,9 +236,12 @@
                     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 }}
             //Refresh
-            function RefreshAll() {
+            function Redraw() {
                 HexGameArea.clear();
                 mass_update(HexBoard);}
+
+            //Restarts Game
+            
 
             //Handles Window Resize Events
 

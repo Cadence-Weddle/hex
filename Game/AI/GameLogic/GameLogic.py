@@ -29,3 +29,6 @@ def SwitchPlayer(player,schema=1):
 		return not(player)
 	else:
 		return not(player-1)+1
+
+def GetGameState(board):
+	return 0

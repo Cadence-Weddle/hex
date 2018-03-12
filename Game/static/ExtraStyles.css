@@ -67,5 +67,16 @@ input.slider::-moz-range-thumb {
 
 .pure-button.pure-button-primary {
     font-family: 'Open Sans', sans-serif;
+    width: 100%;
+    margin-left:0;
+    margin-right:0;
+    padding-left:0;
+    padding-right:0;
+    display:block;
+    text-align:center;
 
+}
+
+.pure-button.pure-button-primary.warning {
+    background: rgb(223, 117, 20);
 }
