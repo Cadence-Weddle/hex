@@ -6,6 +6,8 @@ import numpy as np
 
 app = Flask(__name__)
 
+
+
 @app.route("/")
 def hexgame():
 	return render_template('Hexgame.html')
