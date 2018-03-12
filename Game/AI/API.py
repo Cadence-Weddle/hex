@@ -1,6 +1,6 @@
 import random
 import numpy as np
+import AI.GameLogic.GameLogic
 
 def MakeMove(computetime,board,humanplayer):
-
-	return {'moveloc':int(random.choice(np.argwhere(np.array(board)==0))[0]),'gamestate':0}
+	return {'moveloc':random.choice(GameLogic.GetValidMoves(np.array(board))),'gamestate':0}
