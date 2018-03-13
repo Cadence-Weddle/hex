@@ -50,11 +50,11 @@ class Node:
 		#Checking inputs
 		try:		
 			game = self.game
-			assert type(parent) in (Node, None, type(self))
+			assert type(parent) in (None, type(self))
 			getattr(game, self.get_moves)
 			getattr(game, self.make_move)
 		except:
-			print("An error")
+			print("An error occured while type Checking; parent : {parent}, type(self) : {type_self}".format(parent=parent, type_self=type(self)))
 
 	def add_subnode(self,node):
 		self.subnodes.append(node)
@@ -70,6 +70,9 @@ class Node:
 
 	def convert_to_root(self):
 		self.parent = None
+
+	def __str__(self):
+		return "{type_self}, Parent : {parent}, Number of subnodes : {subnodes}}".format(type_self=type(self), parent=type(self.parent),subnodes=len(self.subnodes))
 
 
 class Tree:

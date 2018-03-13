@@ -1,7 +1,8 @@
 from GameTree import *
-from scores import *
 from copy import deepcopy as copy
 
+def UCT(*args): #MAGIck 
+	return 0
 
 def argmax(list):
 	return sorted(list, key=lambda x: x.mean_action_value)[0]
@@ -15,12 +16,14 @@ class Not_Proccessed:
 
 class Neural_Network_Batch_Processer:
 	"""
-	For storing and proccessing data in bulk. Also functions as a cache---Stores the evaluated boards and doesn't recompute them if a different node with the same board is requested. 
+	For storing and proccessing data in bulk.
+	Also functions as a cache. It stores the evaluated boards and doesn't recompute them if a different node with the same board is requested. 
 	"""
-	def __init__(self, model, max_batch_size=121):
+	
+	def __init__(self, model, MaxCacheSize=10000):
 		self.queue = []
-		self.max_batch_size = max_batch_size
 		self.return_dict = {x.game.board : Not_Proccessed() for x in self.queue}
+	
 	def run_batch(self):
 		outs = self.model.foward_prop([x.game.board for x in self.queue])
 		for x, i in enumerate(self.queue):
@@ -31,15 +34,13 @@ class Neural_Network_Batch_Processer:
 			self.run_batch()
 		return self.return_dict[node.game.board]
 
-	def __setitem__(self, *args):
-		raise NotImplemented
-
 	def add_node(self, node):
 		if not node in self.queue and not node.game.board in self.return_dict.keys():
 			self.queue.append(node)
 
 	def add_list(self, list):
 		for node in list:self.add_node(node)
+
 
 class  MCTS_Node(Node):
 	"""docstring for  MCTS_Node"""
@@ -63,48 +64,55 @@ class  MCTS_Node(Node):
 	@staticmethod
 	def _compute_score(node, method, exploration_constant=1): # U(s,a)
 		if type(node) != MCTS_Node:
-				raise TypeError('MCTS Node Score can only be computed for said type')
-		return method(node,exploration_constant)
+				raise TypeError('MCTS_Node Score can only be computed for said type| Data:{data}'.format(dir(node)))
+		return method(node, exploration_constant)
 
 	def update_score(self):
 		if not self.score:
 			self.score = MCTS_Node._compute_score(self, self.evaluation_function)
-		self.mean_action_value = (sum(self.subnodes) + self.score) / (len(self.subnodes) + 1) #Probably need to change---Just avereges the nn value with the values of the subnodes. 
-	
-	def set_nn_output(x):
+			self.mean_action_value = self.score
+		self.mean_action_value = (sum(self.subnodes) + self.score) / (len(self.subnodes) + 1) #Probably need to change---Just averages the nn value with the values of the subnodes. 
+
+	def set_nn_output(self, x):
 		P, v = x
 		self.value = v
 		self.prior_probability = P
-		self.update_score
-
+		self.update_score()
 	
-	def expand():
+	def expand(self):
 		valid_moves = getattr(self.game, self.get_moves)()	
 		subnodes = []
+
 		for move in valid_moves:
 			temp = copy(self.game)
 			getattr(temp, self.make_move)(move)
 			subnodes.append(MCTS_Node(temp, self, self.processer, self.get_moves, self.make_move))
 		self.processer.add_list(subnodes)
+
 		for node in subnodes:
 			node.set_nn_output(processer[node])
 		self.subnodes = subnodes
 		self.update_score()
 		return subnodes
+	def __str__(self):
+		return "{type_self}, Parent : {parent}, Number of subnodes : {subnodes}, expanded : {expanded}".format(type_self=type(self), parent=type(self.parent),subnodes=len(self.subnodes)
+		,expanded=self.expanded)
 
 
 class MonteCarloTreeSearch(Tree):
 	def __init__(self, game, model, **kwargs):
 		self.game = game
 		self.batch_processer = Neural_Network_Batch_Processer(model)
-		super().__init__(game, root_node=MCTS_Node(game, None, self.batch_processer, "get_valid_moves", "make_move"))#kwargs.get("get_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move")))
+		super().__init__(game, root_node=MCTS_Node(game, None, self.batch_processer, "GetValidMoves", "MakeMove"))#kwargs.get("get_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move")))
 
 	def select(self):
 		curr_node = self.root_node
+		print(curr_node)
 		while curr_node.expanded:
 			curr_node = argmax(curr_node.subnodes)
 			curr_node.visit_count += 1
-		return curr_node
+			print(curr_node)
+		return curr_node	
 
 	def expand_and_eval(self, node):
 		node.expanded = True
