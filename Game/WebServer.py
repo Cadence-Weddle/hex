@@ -17,6 +17,7 @@ def processrequest():
 	indata = request.get_json()
 	print('Request Recived at {time}:{data}'.format(time=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f'),data=indata))
 	output =  MakeMove(computetime = indata['computetime'],board = np.array(indata['board']), humanplayer = indata['humanplayer'])
+	print(output)
 	print('Response at {time}:{data}'.format(time=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f'),data=output))
 	return jsonify(**output)
 

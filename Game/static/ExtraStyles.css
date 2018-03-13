@@ -13,7 +13,8 @@ canvas {
     margin-left: auto;
     margin-right: auto;
     display: block;
-  background:url(CanvasBackground.png);}
+    background:url(CanvasBackground.png);
+    background-size: cover;}
 
 }
 

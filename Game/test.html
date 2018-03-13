@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+function setCookie(cname1,cvalue1,cname2,cvalue2) {
+    document.cookie = cname1 + "=" + cvalue1 +";"+cname2+"="+cvalue2+"path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    alert(decodedCookie)
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function checkCookie() {
+    var user=getCookie("object");
+    if (user != "") {
+        alert("Welcome again " + user);
+    } else {
+       user = prompt("Please enter your name:","");
+       object = prompt("Please enter your object:","");
+       if (user != "" && user != null) {
+           setCookie("username", user, "object",object);
+       }
+    }
+}
+
+</script>
+</head>
+<body onload="checkCookie()">
+</body>
+</html>

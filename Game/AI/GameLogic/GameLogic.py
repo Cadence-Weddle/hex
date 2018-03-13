@@ -17,7 +17,7 @@ def GetValidMoves(board):
 	"""
 	Get all valid moves for a given board.
 	"""
-	return np.where(board == 0)
+	return np.where(board == 0)[0]
 
 def SwitchPlayer(player,schema=1):
 	"""
