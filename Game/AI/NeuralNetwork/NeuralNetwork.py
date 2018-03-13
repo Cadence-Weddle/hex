@@ -8,7 +8,7 @@ from keras.callbacks import TensorBoard
 import numpy as np
 
 class NeuralNetwork:
-    def __init__(self, resid_num_iter=10, input_shape=(11,11,3), optimizer='Adam'):
+    def __init__(self, resid_num_iter=10, input_shape=(11,11,1), optimizer='Adam'):
         #Layer 0 of input is all p1 pos 
         #Layer 1 of input is all p2 pos
         #Layer 2 is who's moving
@@ -75,14 +75,7 @@ class NeuralNetwork:
         '''
         plot_model(self.model, to_file=fp)
 
-
-    def _predict(self,data):
-        '''
-        for testing purposes only, use foward_prop instead
-        '''
-        return self.model.predict(data)
-
-    def foward_prop(self,data):
+    def foward_prop(self,data, BatchSize=32):
         '''
         Works with batches
 
@@ -93,34 +86,16 @@ class NeuralNetwork:
 
         If multiple values:
         Returns a list of dictonaries that follow the same scheme as single valued
-        
-        _reshaped = False
-        print(len(data.shape))
-        if len(data.shape)==3:
-            _reshaped = True
-            data = data.reshape((1,)+data.shape)
-            output_data = self.model.predict(data)
-            return output_data[0][0], output_data[1][0][0]
-           
-            return {'policy':output_data[0][0],
-                    'policy_argmax':np.argmax(output_data[0][0]),
-                    'value':output_data[1][0][0],
-                    'reshaped':_reshaped}
         '''
 
         #if len(data.shape)==4:
         #This could be made more efficent
-        output_data = self.model.predict(data)
+        output_data = self.model.predict(np.array(data), batch_size=BatchSize)
         iterator = range(len(output_data[0]))
         policies = [output_data[0][i] for i in iterator]
         #        policies_argmax = [np.argmax(output_data[0][i]) for i in iterator]
         values = [output_data[1][i][0] for i in iterator]
-        """
-            return [{'policy':policies[i],
-                    'policy_argmax':policies_argmax[i],
-                    'value':values[i],
-                    'reshaped':_reshaped} for i in iterator]
-            """
+        return zip(policies, values)
         
 
 
