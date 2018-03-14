@@ -1,7 +1,3 @@
-user_continues = (confirm("This site feeds your browser Cookies in order to work. Continue to site? ")
-if(!user_continues){
-    window.location.replace("https://en.wikipedia.org/wiki/HTTP_cookie")
-}
 const BoardSize = 11
 const RefreshRate = 15
 const PlayerColors = ["white","red","blue"];
