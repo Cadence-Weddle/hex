@@ -11,21 +11,65 @@ def argmax(list):
 def sum_nodes(list):
 	return sum([lambda x:x.mean_action_value for x in list])
 
+def hash(ndarray):
+	return tuple(ndarray.flatten()).__hash__()
+
 class Not_Proccessed:
 	pass
 
-class ArrayWrapper:
+class DataNode:
 	"""
-	Allows for the use of np.ndarray s as dictionary keys in Neural_Network_Batch_Proccesser
+	Stores the Data 
 	"""
-	def __init__(self, array):
-		self.array = array
-	def __hash__(self):
-		return tuple(self.array.flatten()).__hash__()
-	def __eq__(self, array):
-		return array == self.array
-	def unpack(self):
-		return array
+	def __init__(self, key, p, v, visit_count):
+		self.key = key
+		self.p = p
+		self.v = v
+		self.visit_count
+	def GetData(self):
+		return np.array([p,v])
+
+	def SetData(data):
+		key, p, v, visit_count = data
+		if self.key != key:
+			raise KeyError("Expected key <{}> but got key <{}>".format(self.key, key))
+			return self
+		elif self.visit_count > visit_count:
+			return self
+		else:
+			self.p, self.v, self.visit_count = p, v, visit_count
+			return self
+	
+	def __str__():
+		return "DataNode(\{ key:{}, p:{}, v:{}, visit_count:{}\})".format(self.key, self.p, self.v, self.visit_count)
+
+	def __hash__():
+		return hash(self.key).__hash__()
+
+
+class DataStorage:
+	def __init__(self):
+		self.dict = {None : None}
+	
+	def __getitem__(self, item):
+		return self.dict[hash(item)].GetData()
+	
+	def __setitem__(self, key, **data):
+		try:
+			self.dict[hash(key)].SetData(key, **data)
+		except KeyError:
+			self.dict[hash(key)] = DataNode(key, **data)
+	
+	def ExtractTrainingData(self):
+		new_dict = self.dict
+		x_return = []
+		y_return = []
+		for key in new_dict.keys():
+			x_return.append(new_dict[key].key)
+			y_return.append(new_dict[key].GetData)
+		return np.array(x_return), np.array(y_return)
+
+
 
 class Neural_Network_Batch_Processer:
 	"""
@@ -41,11 +85,11 @@ class Neural_Network_Batch_Processer:
 	def run_batch(self):
 		outs = self.model.foward_prop([x.game.board for x in self.queue])
 		for x, i in enumerate(self.queue):
-			self.return_dict[tuple(i.game.board.flatten())] = outs[x]
+			self.return_dict[hash(i.game.board)] = outs[x]
 
 	def __getitem__(self, node):
 		try:
-			if self.return_dict[tuple(node.game.board.flatten())] is Not_Proccessed():
+			if self.return_dict[hash(node.game.board)] is Not_Proccessed():
 				if not node in self.queue:
 					self.queue.append(node)
 				self.run_batch()
@@ -53,12 +97,12 @@ class Neural_Network_Batch_Processer:
 			if not node in self.queue:
 				self.queue.append(node)
 			self.run_batch()
-		return self.return_dict[tuple(node.game.board.flatten())]		
+		return self.return_dict[hash(node.game.board)]		
 
 	def add_node(self, node):
-		if not node in self.queue and not tuple(node.game.board.flatten()) in self.return_dict.keys():
+		if not node in self.queue and not hash(node.game.board) in self.return_dict.keys():
 			self.queue.append(node)
-			#self.return_dict[tuple(node.game.board.flatten())] = Not_Proccessed()
+			#self.return_dict[hash(node.game.board)] = Not_Proccessed()
 
 	def add_list(self, list):
 		for node in list:self.add_node(node)

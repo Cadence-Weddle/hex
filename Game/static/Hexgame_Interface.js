@@ -95,7 +95,7 @@ function sendAJAXRequest(board,computetime,humanplayer) {
             else{
                 if (ServerOutput['gamestate']==1 || ServerOutput['gamestate']==2 ) {
                     if (ServerOutput['gamestate'] == humanplayer){
-                        document.getElementById('status').innerHTML = 'You Won!. Refresh this page to play again.'
+                        document.getElementById('status').innerHTML = 'You Won!. Click Reset to Play again.'
                         alert('You Won!\nClick the reset button or refresh this page to play again.')
                         HasGameReachedTerminalState=true
                         statistics['wins'] = (statistics['wins'] + 1)
@@ -103,7 +103,7 @@ function sendAJAXRequest(board,computetime,humanplayer) {
                         Cookies.set('statistics',  statistics, {expires: 7});
                     }
                     else {
-                        document.getElementById('status').innerHTML = 'You have lost to the AI.\nRefresh this page to play again.'
+                        document.getElementById('status').innerHTML = 'You have lost to the AI.\nClick reset to play again.'
                         alert('You have lost to the AI.\nClick the reset button or refresh this page to play again.')
                         HasGameReachedTerminalState=true
                         statistics['losses'] = (statistics['losses'] + 1)
