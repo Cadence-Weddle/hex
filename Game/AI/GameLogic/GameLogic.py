@@ -2,8 +2,7 @@ import numpy as np
 from copy import deepcopy as copy
 
 class Game():
-<<<<<<< HEAD
-	def __init__(self):
+		def __init__(self):
 		self.board = np.zeros([121,1])
 		self.GameState = 0
 		self.NextPlayer = 1
@@ -111,7 +110,6 @@ def GetValidMoves(board):
         temp = copy(board)
         temp.reshape(121)
         return np.where(temp == 0)[0]
->>>>>>> 452a54fc44bd98be79d7d874c39ce2367c45627e
 
 def SwitchPlayer(player,schema=1):
         """
