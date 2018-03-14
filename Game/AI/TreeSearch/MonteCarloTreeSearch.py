@@ -1,5 +1,6 @@
 from GameTree import *
 from copy import deepcopy as copy
+import numpy as np
 
 def UCT(*args): #MAGIck 
 	return 0
@@ -13,6 +14,18 @@ def sum_nodes(list):
 class Not_Proccessed:
 	pass
 
+class ArrayWrapper:
+	"""
+	Allows for the use of np.ndarray s as dictionary keys in Neural_Network_Batch_Proccesser
+	"""
+	def __init__(self, array):
+		self.array = array
+	def __hash__(self):
+		return tuple(self.array.flatten()).__hash__()
+	def __eq__(self, array):
+		return array == self.array
+	def unpack(self):
+		return array
 
 class Neural_Network_Batch_Processer:
 	"""
@@ -22,21 +35,30 @@ class Neural_Network_Batch_Processer:
 	
 	def __init__(self, model, MaxCacheSize=10000):
 		self.queue = []
-		self.return_dict = {x.game.board : Not_Proccessed() for x in self.queue}
-	
+		self.return_dict = {}
+		self.model = model
+
 	def run_batch(self):
 		outs = self.model.foward_prop([x.game.board for x in self.queue])
 		for x, i in enumerate(self.queue):
-			self.return_dict[i.game.board] = outs[x]
+			self.return_dict[tuple(i.game.board.flatten())] = outs[x]
 
 	def __getitem__(self, node):
-		if self.return_dict[node.game.board] is Not_Proccessed():
+		try:
+			if self.return_dict[tuple(node.game.board.flatten())] is Not_Proccessed():
+				if not node in self.queue:
+					self.queue.append(node)
+				self.run_batch()
+		except KeyError:
+			if not node in self.queue:
+				self.queue.append(node)
 			self.run_batch()
-		return self.return_dict[node.game.board]
+		return self.return_dict[tuple(node.game.board.flatten())]		
 
 	def add_node(self, node):
-		if not node in self.queue and not node.game.board in self.return_dict.keys():
+		if not node in self.queue and not tuple(node.game.board.flatten()) in self.return_dict.keys():
 			self.queue.append(node)
+			#self.return_dict[tuple(node.game.board.flatten())] = Not_Proccessed()
 
 	def add_list(self, list):
 		for node in list:self.add_node(node)
@@ -71,6 +93,7 @@ class  MCTS_Node(Node):
 		if not self.score:
 			self.score = MCTS_Node._compute_score(self, self.evaluation_function)
 			self.mean_action_value = self.score
+			return
 		self.mean_action_value = (sum(self.subnodes) + self.score) / (len(self.subnodes) + 1) #Probably need to change---Just averages the nn value with the values of the subnodes. 
 
 	def set_nn_output(self, x):
@@ -90,7 +113,7 @@ class  MCTS_Node(Node):
 		self.processer.add_list(subnodes)
 
 		for node in subnodes:
-			node.set_nn_output(processer[node])
+			node.set_nn_output(self.processer[node])
 		self.subnodes = subnodes
 		self.update_score()
 		return subnodes
@@ -107,7 +130,6 @@ class MonteCarloTreeSearch(Tree):
 
 	def select(self):
 		curr_node = self.root_node
-		print(curr_node)
 		while curr_node.expanded:
 			curr_node = argmax(curr_node.subnodes)
 			curr_node.visit_count += 1

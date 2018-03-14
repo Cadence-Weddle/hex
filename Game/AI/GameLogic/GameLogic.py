@@ -3,10 +3,10 @@ from copy import deepcopy as copy
 
 class Game():
 	def __init__(self):
-		self.board = np.zeros([11,11,1])
+		self.board = np.zeros([121,1])
 		self.GameState = 0
 		self.NextPlayer = 1
-		self.NextMoveBoard = np.zeros([11,11,1]) #Helps with NN proccessing. This way "self.board" can be inverted without damaging the "MakeMove" and "GetValidMoves" functions, which are needed for the MTCS
+		self.NextMoveBoard = np.zeros([121,1]) #Helps with NN proccessing. This way "self.board" can be inverted without damaging the "MakeMove" and "GetValidMoves" functions, which are needed for the MTCS
 
 	def MakeMove(self, location, player=None):
 		player = player if player else self.NextPlayer
@@ -27,7 +27,6 @@ class Game():
 
 	def InvertBoard(self):
 		temp = copy(self.NextMoveBoard)
-		temp.reshape(121)
 		for i, x in enumerate(temp):
 			temp[i] = SwitchPlayer(x, schema=0)
 		self.board = temp
@@ -44,8 +43,8 @@ def MakeMove(board,location,player, PlayerSchema={"player1" : 1, "player2" : 2})
 		location and player must be integers
 
 	"""
-		if board[location] == 0 and (player in [PlayerSchema["player1"], PlayerSchema["player2"]]):
-			return np.put(board,location,player)
+		if board[location][0] == 0 and (player in [PlayerSchema["player1"], PlayerSchema["player2"]]):
+			np.put(board,location,player)
 		else:
 			raise ValueError('Invalid Input')
 	
@@ -53,10 +52,8 @@ def GetValidMoves(board):
 		"""
 		Get all valid moves for a given board.
 		"""
-		print(board)
 		temp = copy(board)
-		temp.reshape(121)
-		return np.where(temp == 0)[0]
+		return [x for x, i in enumerate(temp) if i == 0]
 
 def SwitchPlayer(player,schema=1):
 		"""

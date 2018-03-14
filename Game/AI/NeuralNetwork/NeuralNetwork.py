@@ -90,12 +90,15 @@ class NeuralNetwork:
 
         #if len(data.shape)==4:
         #This could be made more efficent
+        data = np.array(data)
+        if data.shape[1,2] != (11,11):
+            data = data.reshape([len(data), 11, 11, 1])
         output_data = self.model.predict(np.array(data), batch_size=BatchSize)
         iterator = range(len(output_data[0]))
         policies = [output_data[0][i] for i in iterator]
         #        policies_argmax = [np.argmax(output_data[0][i]) for i in iterator]
         values = [output_data[1][i][0] for i in iterator]
-        return zip(policies, values)
+        return [(p,v) for p,v in zip(policies, values)]
         
 
 
