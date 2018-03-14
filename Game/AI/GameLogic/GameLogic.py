@@ -2,7 +2,6 @@ import numpy as np
 from copy import deepcopy as copy
 
 class Game():
-<<<<<<< HEAD
 	def __init__(self):
 		self.board = np.zeros([121,1])
 		self.GameState = 0
@@ -37,25 +36,24 @@ class Game():
 
 
 def MakeMove(board,location,player, PlayerSchema={"player1" : 1, "player2" : 2}):
-		"""
-		DOES NOT RETURN COPY OF THE BOARD. MODIFIES NP.ARRAY OBJECT ITSELF
-		Puts a player's value into the board
-		Board must be an np array
-		location and player must be integers
+        """
+        DOES NOT RETURN COPY OF THE BOARD. MODIFIES NP.ARRAY OBJECT ITSELF
+        Puts a player's value into the board
+        Board must be an np array
+        location and player must be integers
+        """
+        if board[location][0] == 0 and (player in [PlayerSchema["player1"], PlayerSchema["player2"]]):
+            np.put(board,location,player)
+        else:
+            raise ValueError('Invalid Input')
 
-	"""
-		if board[location][0] == 0 and (player in [PlayerSchema["player1"], PlayerSchema["player2"]]):
-			np.put(board,location,player)
-		else:
-			raise ValueError('Invalid Input')
-	
-def GetValidMoves(board):
-		"""
-		Get all valid moves for a given board.
-		"""
-		temp = copy(board)
-		return [x for x, i in enumerate(temp) if i == 0]
-=======
+    def GetValidMoves(board):
+            """
+            Get all valid moves for a given board.
+            """
+            temp = copy(board)
+            return [x for x, i in enumerate(temp) if i == 0]
+
     def __init__(self):
         self.board = np.zeros([11,11,1])
         self.GameState = 0
@@ -90,42 +88,41 @@ def GetValidMoves(board):
         return "[Game] Board : {board}, NextMoveBoard : {NextMoveBoard}, GameState : {GameState}, NextPlayer : {NextPlayer}".format(board=self.board, NextMoveBoard=self.NextMoveBoard, GameState=self.GameState, NextPlayer=self.NextPlayer)
 
 
-def MakeMove(board,location,player, PlayerSchema={"player1" : 1, "player2" : 2}):
-        """
-        DOES NOT RETURN COPY OF THE BOARD. MODIFIES NP.ARRAY OBJECT ITSELF
-        Puts a player's value into the board
-        Board must be an np array
-        location and player must be integers
+    def MakeMove(board,location,player, PlayerSchema={"player1" : 1, "player2" : 2}):
+            """
+            DOES NOT RETURN COPY OF THE BOARD. MODIFIES NP.ARRAY OBJECT ITSELF
+            Puts a player's value into the board
+            Board must be an np array
+            location and player must be integers
 
-    """
-        if board[location] == 0 and (player in [PlayerSchema["player1"], PlayerSchema["player2"]]):
-            return np.put(board,location,player)
-        else:
-            raise ValueError('Invalid Input')
+            """
+            if board[location] == 0 and (player in [PlayerSchema["player1"], PlayerSchema["player2"]]):
+                return np.put(board,location,player)
+            else:
+                raise ValueError('Invalid Input')
     
-def GetValidMoves(board):
-        """
-        Get all valid moves for a given board.
-        """
-        print(board)
-        temp = copy(board)
-        temp.reshape(121)
-        return np.where(temp == 0)[0]
->>>>>>> 452a54fc44bd98be79d7d874c39ce2367c45627e
+    def GetValidMoves(board):
+            """
+            Get all valid moves for a given board.
+            """
+            print(board)
+            temp = copy(board)
+            temp.reshape(121)
+            return GetGameState(temp)
 
-def SwitchPlayer(player,schema=1):
-        """
-        Returns the other player
-        schema 0: players are -1 and 1
-        schema 1: players are 1 and 2
-
-        """
-        if player == 0:
-            return 0
-        elif not schema:
-            return -1 if player==1 else 1
-        else:
-            return 1 if player==2 else 2
+    def SwitchPlayer(self,schema=1):
+            """
+            Returns the other player
+            schema 0: players are -1 and 1
+            schema 1: players are 1 and 2
+            """
+            
+            if self.player == 0:
+                return 0
+            elif not schema:
+                return -1 if self.player==1 else 1
+            else:
+                return 1 if self.player==2 else 2
 
 
     def GetGameState(board):
