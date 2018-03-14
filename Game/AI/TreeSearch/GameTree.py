@@ -71,8 +71,6 @@ class Node:
 	def convert_to_root(self):
 		self.parent = None
 
-	def __str__(self):
-		return "{type_self}, Parent : {parent}, Number of subnodes : {subnodes}}".format(type_self=type(self), parent=type(self.parent),subnodes=len(self.subnodes))
 
 
 class Tree:

@@ -133,7 +133,6 @@ class MonteCarloTreeSearch(Tree):
 		while curr_node.expanded:
 			curr_node = argmax(curr_node.subnodes)
 			curr_node.visit_count += 1
-			print(curr_node)
 		return curr_node	
 
 	def expand_and_eval(self, node):
@@ -149,4 +148,5 @@ class MonteCarloTreeSearch(Tree):
 	def turn(self, iterations):
 		for i in range(iterations):
 			self.back_prop(self.expand_and_eval(self.select()))
-		return argmax(self.root_node.subnodes)
+		node =  argmax(self.root_node.subnodes)
+		return [i for i,x in enumerate(node.game.board - node.parent.game.board)][0]

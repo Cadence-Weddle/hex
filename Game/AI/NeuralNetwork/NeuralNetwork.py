@@ -91,7 +91,7 @@ class NeuralNetwork:
         #if len(data.shape)==4:
         #This could be made more efficent
         data = np.array(data)
-        if data.shape[1,2] != (11,11):
+        if data.shape[1:2] != (11,11):
             data = data.reshape([len(data), 11, 11, 1])
         output_data = self.model.predict(np.array(data), batch_size=BatchSize)
         iterator = range(len(output_data[0]))
