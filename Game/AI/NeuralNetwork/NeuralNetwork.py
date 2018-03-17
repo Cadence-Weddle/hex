@@ -6,6 +6,7 @@ from keras.optimizers import SGD
 from keras.models import Model
 from keras.callbacks import TensorBoard
 import numpy as np
+import keras.backend as k
 
 class NeuralNetwork:
     def __init__(self, resid_num_iter=10, input_shape=(11,11,1), optimizer='Adam'):
@@ -108,9 +109,14 @@ class NeuralNetwork:
         value output should be a 3D array with shape (-1,1,121)
         policy output is a 2D array with shape (-1,1)
         '''
+        def loss(y_true, y_pred):
+            p_true, v_true = y_true[0], y_true[1]
+            p, v = y_pred[0], y_pred[1]
+            return k.square(v_true - v) - k.kullback_leibler_divergence(p_true, p)
+
         try:
             assert(len(input_data) == len(value_output_data) == len(policy_output_data))
         except AssertionError:
             raise Exception("Length(x)={} but Length(y)={}. Invalid data".format(len(x), len(y)))
-
+        self.model.compile(loss=loss, optimizer=SGD)        
         self.model.fit(x=input_data, y={'policy_output':policy_output_data,'value_output':value_output_data}, batch_size=batch_size)

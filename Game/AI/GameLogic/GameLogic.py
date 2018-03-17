@@ -7,10 +7,12 @@ class Game():
 		self.GameState = 0
 		self.NextPlayer = 1
 		self.NextMoveBoard = np.zeros([121,1]) #Helps with NN proccessing. This way "self.board" can be inverted without damaging the "MakeMove" and "GetValidMoves" functions, which are needed for the MTCS
+		self.history = []
 
 	def MakeMove(self, location, player=None):
 		player = player if player else self.NextPlayer
 		MakeMove(self.NextMoveBoard, location, player, PlayerSchema={"player1" : 1, "player2" : -1})
+		self.history.append(location)
 		self.GameState = GetGameState(self.NextMoveBoard, PlayerSchema={"Player1" : 1, "Player2" : -1})
 		self.NextPlayer = SwitchPlayer(self.NextPlayer)
 		self.board = self.NextMoveBoard
