@@ -4,3 +4,4 @@ Game/AI/GameLogic/__pycache__/
 Dep/*
 */__pycache__/
 
+*.pyc
