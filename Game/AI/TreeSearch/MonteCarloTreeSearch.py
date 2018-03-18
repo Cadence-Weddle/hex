@@ -1,6 +1,4 @@
-import sys
-sys.path.append("C:\\Users\\user\\Desktop\\Github\\hex.github.io\\Game\\AI\\TreeSearch")
-from GameTree import *
+from AI.TreeSearch.GameTree import *
 from copy import deepcopy as copy
 import numpy as np
 import random

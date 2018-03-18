@@ -1,6 +1,4 @@
-import sys
-sys.path.append("C:\\Users\\user\\Desktop\\Github\\hex.github.io\\Game\\AI\\")
-
+# Important Notice: Only call this file from root (Game Directory).
 import random
 import numpy as np
 import AI.GameLogic.GameLogic as GameLogic
