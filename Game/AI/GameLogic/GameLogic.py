@@ -186,7 +186,7 @@ def GetGameState(board, PlayerSchema=None):
 			if check_state_from_queue((0,1,2,3,4,5,6,7,8,9,10), 1) == 1:
 				return 1
 			elif check_state_from_queue((0,11,22,33,44,55,66,77,88,99,110), 2) == 1:
-				return 2
+				return -1
 			else:
 				return 0
 		return check_state_from_queue(board)

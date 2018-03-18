@@ -1,8 +1,10 @@
-
+import sys
+sys.path.append("C:\\Users\\user\\Desktop\\Github\\hex.github.io\\Game\\AI\\TreeSearch")
 from GameTree import *
 from copy import deepcopy as copy
 import numpy as np
 import random
+
 
 def UCT(node, exploration_constant): #Magick? Please fix 
 	return exploration_constant	* node.prior_probability * (np.sqrt(node.visit_count + 1) / (node.visit_count + 1))
@@ -115,7 +117,9 @@ class  MCTS_Node(Node):
 	def __str__(self):
 		return "{type_self}, Parent : {parent}, Number of subnodes : {subnodes}, expanded : {expanded}".format(type_self=type(self), parent=type(self.parent),subnodes=len(self.subnodes)
 		,expanded=self.expanded)
-	
+	def __repr__(self):
+		return self.__str__()
+
 	def __getitem__(self, move):
 		for subnode in self.subnodes:
 			if subnode.move == move:
