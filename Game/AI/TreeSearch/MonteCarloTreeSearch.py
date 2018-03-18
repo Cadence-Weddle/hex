@@ -125,9 +125,9 @@ class  MCTS_Node(Node):
 		return None
 
 class MonteCarloTreeSearch(Tree):
-	def __init__(self, game, model, **kwargs):
+	def __init__(self, game,model=None, processer=None,  **kwargs):
 		self.game = game
-		self.batch_processer = Neural_Network_Batch_Processer(model)
+		self.batch_processer = processer if processer else Neural_Network_Batch_Processer(model)
 		super().__init__(game, root_node=MCTS_Node(game, None, self.batch_processer, 0, get_moves="GetValidMoves", make_move="MakeMove"))#kwargs.get("get_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move")))
 		self.top = self.root_node
 
