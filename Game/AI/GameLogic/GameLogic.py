@@ -2,15 +2,16 @@ import numpy as np
 from copy import deepcopy as copy
 
 class Game():
-	def __init__(self):
+	def __init__(self, echo=False):
 		self.board = np.zeros([121,1])
 		self.GameState = 0
 		self.NextPlayer = 1
 		self.NextMoveBoard = np.zeros([121,1]) #Helps with NN proccessing. This way "self.board" can be inverted without damaging the "MakeMove" and "GetValidMoves" functions, which are needed for the MTCS
 		self.history = []
+		self.echo = echo
 
-	def MakeMove(self, location, player=None):
-		player = player if player else self.NextPlayer
+	def MakeMove(self, location):
+		player = self.NextPlayer
 		MakeMove(self.NextMoveBoard, location, player, PlayerSchema={"player1" : 1, "player2" : -1})
 		self.history.append(location)
 		self.GameState = GetGameState(self.NextMoveBoard, PlayerSchema={"Player1" : 1, "Player2" : -1})
@@ -24,7 +25,7 @@ class Game():
 		if not self.GameState:
 				board = self.NextMoveBoard
 				return GetValidMoves(board)	
-
+		return []
 	def GetGameState(self):
 		return self.GameState
 
@@ -57,9 +58,9 @@ def GetValidMoves(board):
 	"""
 	temp = copy(board)
 	temp.reshape(121)
-	return np.where(temp == 0)[0]
+	return np.array([x for x,i in enumerate(temp) if i ==0])
 
-def SwitchPlayer(player,schema=1):
+def SwitchPlayer(player,schema=0):
 		"""
 		Returns the other player
 		schema 0: players are -1 and 1
@@ -165,6 +166,7 @@ def GetGameState(board, PlayerSchema=None):
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			
 			new_queue = []
 			for position in queue:
 				GLOBAL_CHECKED[position]=1

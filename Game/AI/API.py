@@ -1,6 +1,4 @@
-import sys
-sys.path.append("C:\\Users\\user\\Desktop\\Github\\hex.github.io\\Game\\AI\\")
-
+# Important Notice: Only call this file from root (Game Directory).
 import random
 import numpy as np
 import AI.GameLogic.GameLogic as GameLogic
@@ -20,6 +18,6 @@ def MakeMove(computetime, board, humanplayer,):
 		Game.NextPlayer = -1
 		Game.InvertBoard()
 		mcts = MCTS(Game, NN())
-		move = mcts.turn(11)
+		move = mcts.turn(computetime)
 		Game.MakeMove(move)
 		return {'moveloc' : str(move), 'gamestate': str(Game.GameState)}

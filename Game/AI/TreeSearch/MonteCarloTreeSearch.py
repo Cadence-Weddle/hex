@@ -1,10 +1,8 @@
-import sys
-sys.path.append("C:\\Users\\user\\Desktop\\Github\\hex.github.io\\Game\\AI\\TreeSearch")
-from GameTree import *
+from AI.TreeSearch.GameTree import *
 from copy import deepcopy as copy
 import numpy as np
 import random
-
+import time
 
 def UCT(node, exploration_constant): #Magick? Please fix 
 	return exploration_constant	* node.prior_probability * (np.sqrt(node.visit_count + 1) / (node.visit_count + 1))
@@ -95,7 +93,7 @@ class  MCTS_Node(Node):
 		self.update_score()
 	
 	def expand(self):
-		valid_moves = getattr(self.game, self.get_moves)()	
+		valid_moves = getattr(self.game, self.get_moves)()
 		subnodes = []
 		r_probs = self.p.reshape([121])
 		for move, p in zip(valid_moves, r_probs):
@@ -124,7 +122,7 @@ class  MCTS_Node(Node):
 		for subnode in self.subnodes:
 			if subnode.move == move:
 				return subnode
-		return None
+		raise Exception("Error finding move {} in node {}".format(move, str(self)))
 
 class MonteCarloTreeSearch(Tree):
 	def __init__(self, game, model, **kwargs):
@@ -164,14 +162,21 @@ class MonteCarloTreeSearch(Tree):
 			node.update_score()
 			node = node.parent
 
-	def turn(self, iterations):
-		for i in range(iterations):
+	def turn(self, ComputeTime):
+		start = time.time()
+		while time.time() - start < ComputeTime:
 			self.back_prop(self.expand_and_eval(self.select()))
-			if i // 10 == i / 10:
-				print("Iter {}".format(i))
-		node =  argmax(self.root_node.subnodes)
-		move = [i for i,x in enumerate(node.game.board - node.parent.game.board)][0]
+
+		node = argmax([x for x in self.root_node.subnodes if x])
+		print(node in self.root_node.subnodes)
+		for i in range(len(node.game.board)):
+			if node.parent.game.board[i] != node.game.board[i]:
+				move = i
+				break
+
 		self.game.MakeMove(move)
+		self.root_node = self.root_node[move]
+		self.root_node.convert_to_root()
 		return move
 	
 	def train(self, gamma):
@@ -180,6 +185,7 @@ class MonteCarloTreeSearch(Tree):
 		training_data = []
 		curr_node = self.top
 		for move in history:
+			print(move)
 			curr_node = curr_node[move]
 		history = history[::-1]
 		i = 1

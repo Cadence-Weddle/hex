@@ -109,6 +109,7 @@ class NeuralNetwork:
         value output should be a 3D array with shape (-1,1,121)
         policy output is a 2D array with shape (-1,1)
         '''
+        print("Training ...")
         def loss(y_true, y_pred):
             p_true, v_true = y_true[0], y_true[1]
             p, v = y_pred[0], y_pred[1]
@@ -120,3 +121,4 @@ class NeuralNetwork:
             raise Exception("Length(x)={} but Length(y)={}. Invalid data".format(len(x), len(y)))
         self.model.compile(loss=loss, optimizer=SGD)        
         self.model.fit(x=input_data, y={'policy_output':policy_output_data,'value_output':value_output_data}, batch_size=batch_size)
+        print("Done.")
