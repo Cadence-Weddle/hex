@@ -18,6 +18,7 @@ def processrequest():
 	print(output)
 	print('Response at {time}:{data}'.format(time=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f'),data=output))
 	return jsonify(**output)
+<<<<<<< HEAD
 '''
 def parse(board):
 	"""
@@ -38,5 +39,8 @@ def parse(board):
 	k = output.pop(-1) if output[-1] == 121 else 0
 	return output
 '''
+=======
+
+>>>>>>> a3237c2a7231b767856353a4b6327e229a61d919
 if __name__ == "__main__":
 	app.run(port=80,host= '0.0.0.0')
