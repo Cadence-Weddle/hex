@@ -3,10 +3,10 @@ from copy import deepcopy as copy
 
 class Game():
 	def __init__(self):
-		self.board = np.zeros([121,1])
+		self.board = np.zeros([121])
 		self.GameState = 0
-		self.NextPlayer = 1
-		self.NextMoveBoard = np.zeros([121,1]) #Helps with NN proccessing. This way "self.board" can be inverted without damaging the "MakeMove" and "GetValidMoves" functions, which are needed for the MTCS
+		self.NextPlayer = -1 
+		self.NextMoveBoard = np.zeros([121]) #Helps with NN proccessing. This way "self.board" can be inverted without damaging the "MakeMove" and "GetValidMoves" functions, which are needed for the MTCS
 		self.history = []
 
 	def MakeMove(self, location, player=None):
@@ -45,11 +45,10 @@ def MakeMove(board,location,player, PlayerSchema={"player1" : 1, "player2" : 2})
 		Board must be an np array
 		location and player must be integers
 		"""
-		if board[location][0] == 0 and (player in [PlayerSchema["player1"], PlayerSchema["player2"]]):
+		if board[location] == 0 and (player in [PlayerSchema["player1"], PlayerSchema["player2"]]):
 			np.put(board,location,player)
 		else:
-			np.put(board, location, player)
-			#raise ValueError('Invalid Input')
+			raise ValueError('Invalid Input. Got [loc : {}, player : {}, board[loc] : {}, \n board : {}'.format(location, player, board[location], board))
 	
 def GetValidMoves(board):
 	"""
@@ -59,7 +58,7 @@ def GetValidMoves(board):
 	temp.reshape(121)
 	return np.where(temp == 0)[0]
 
-def SwitchPlayer(player,schema=1):
+def SwitchPlayer(player,schema=0):
 		"""
 		Returns the other player
 		schema 0: players are -1 and 1
@@ -76,7 +75,6 @@ def SwitchPlayer(player,schema=1):
 
 
 def GetGameState(board, PlayerSchema=None):
-		return np.random.choice([0,0,0,0,0,0,0,0,0,0,0,0,1,2]) #Temporary Thing for the MCTSs
 		"""
 		Returns game state from a given board:
 		  0: Game has not reached terminal position
@@ -189,4 +187,4 @@ def GetGameState(board, PlayerSchema=None):
 				return -1
 			else:
 				return 0
-		return check_state_from_queue(board)
+		return check_state_from_queue(board.astype(np.int64), 1)

@@ -2,7 +2,7 @@ from AI.TreeSearch.GameTree import *
 from copy import deepcopy as copy
 import numpy as np
 import random
-
+import time
 
 def UCT(node, exploration_constant): #Magick? Please fix 
 	return exploration_constant	* node.prior_probability * (np.sqrt(node.visit_count + 1) / (node.visit_count + 1))
@@ -113,8 +113,8 @@ class  MCTS_Node(Node):
 		return (self.game.board.reshape([11,11,1]), self.reward)
 
 	def __str__(self):
-		return "{type_self}, Parent : {parent}, Number of subnodes : {subnodes}, expanded : {expanded}".format(type_self=type(self), parent=type(self.parent),subnodes=len(self.subnodes)
-		,expanded=self.expanded)
+		return "{type_self}, Parent : {parent}, Number of subnodes : {subnodes}, expanded : {expanded}, move : {move}".format(type_self=type(self), parent=type(self.parent),subnodes=len(self.subnodes)
+		,expanded=self.expanded, move=self.move)
 	def __repr__(self):
 		return self.__str__()
 
@@ -148,6 +148,8 @@ class MonteCarloTreeSearch(Tree):
 	def select(self):
 		curr_node = self.root_node
 		while curr_node.expanded:
+			if curr_node.game.GameState != 0:
+				break
 			curr_node = argmax([node for node in curr_node.subnodes if not node.game.GameState])
 			curr_node.visit_count += 1
 		return curr_node	
@@ -162,16 +164,20 @@ class MonteCarloTreeSearch(Tree):
 			node.update_score()
 			node = node.parent
 
-	def turn(self, iterations):
-		for i in range(iterations):
+	def turn(self, ComputeTime):
+		start = time.time()
+		i = 0
+		while time.time() - start < ComputeTime / 1000:
+			if not i:
+				i +=1
 			self.back_prop(self.expand_and_eval(self.select()))
-			if i // 10 == i / 10:
-				print("Iter {}".format(i))
-		node =  argmax(self.root_node.subnodes)
-		move = [i for i,x in enumerate(node.game.board - node.parent.game.board)][0]
-		self.game.MakeMove(move)
+
+		node = argmax(self.root_node.subnodes)
+		move = node.move
+		self.root_node = node
+		self.root_node.convert_to_root()
 		return move
-	
+
 	def train(self, gamma):
 		model = self.batch_processer.model
 		history = self.game.history
