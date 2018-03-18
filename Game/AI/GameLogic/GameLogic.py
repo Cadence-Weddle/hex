@@ -21,8 +21,9 @@ class Game():
 
 
 	def GetValidMoves(self):
-		board = self.NextMoveBoard
-		return GetValidMoves(board)	
+		if not self.GameState:
+				board = self.NextMoveBoard
+				return GetValidMoves(board)	
 
 	def GetGameState(self):
 		return self.GameState
