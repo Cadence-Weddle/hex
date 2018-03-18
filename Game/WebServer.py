@@ -37,7 +37,6 @@ def parse(board):
 	k = output.pop(-1) if output[-1] == 121 else 0
 	k = output.pop(-1) if output[-1] == 121 else 0
 	return output
-
+'''
 if __name__ == "__main__":
 	app.run(port=80,host= '0.0.0.0')
-'''
