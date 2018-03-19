@@ -51,7 +51,7 @@ MCTSM = MCTS_Manager()
 def hexgame():
 	return render_template('Hexgame.html')
 
-@app.route('_/processrequest', methods=['GET', 'POST'])
+@app.route('/_processrequest', methods=['GET', 'POST'])
 def processrequest():
 	indata = request.get_json()
 	curr_board = np.array(indata['board'])
