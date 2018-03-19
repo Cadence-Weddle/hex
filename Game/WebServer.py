@@ -59,7 +59,7 @@ def processrequest():
     gamestate = GameLogic.GetGameState(curr_board)
     if gamestate !=0:
         print('Terminal Gamestate Reached')
-        return jsonify({'gamestate':gamestate,player:'-1'})
+        return jsonify(gamestate=gamestate,player=-1)
     else:
         output = MCTSM.MakeMove(computetime = indata['computetime'], board = curr_board)
         print('Response at {time}:{data}'.format(time=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f'),data="-"))
