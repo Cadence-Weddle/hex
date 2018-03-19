@@ -125,10 +125,11 @@ class  MCTS_Node(Node):
 		return None
 
 class MonteCarloTreeSearch(Tree):
-	def __init__(self, game,model=None, processer=None,  **kwargs):
+	def __init__(self, game, model=None, processer=None,  **kwargs):
 		self.game = game
 		self.batch_processer = processer if processer else Neural_Network_Batch_Processer(model)
-		super().__init__(game, root_node=MCTS_Node(game, None, self.batch_processer, 0, get_moves="GetValidMoves", make_move="MakeMove"))#kwargs.get("get_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move")))
+
+		super().__init__(game, root_node=kwargs.get("rn", MCTS_Node(game, None, self.batch_processer, 0, get_moves="GetValidMoves", make_move="MakeMove")))#kwargs.get("get_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move")))
 		self.top = self.root_node
 
 		self.batch_processer.add_node(self.root_node)
@@ -139,11 +140,10 @@ class MonteCarloTreeSearch(Tree):
 		curr_node = self.root_node
 		for move in history:
 			game.MakeMove(move)
+			if not curr_node.expanded:
+				curr_node.expand()
 			curr_node = curr_node[move]
-
-	def move(self, move):
-		self.game.MakeMove(move)
-		self.root_node = self.root_node[move]
+		self.root_node = curr_node
 
 	def select(self):
 		curr_node = self.root_node
