@@ -5,11 +5,12 @@ from keras.utils import plot_model
 from keras.optimizers import SGD
 from keras.models import Model
 from keras.callbacks import TensorBoard
+from keras.losses import categorical_crossentropy
 import numpy as np
 import keras.backend as k
 
 class NeuralNetwork:
-    def __init__(self, resid_num_iter=10, input_shape=(11,11,1), optimizer='Adam'):
+    def __init__(self, resid_num_iter=10, input_shape=(11,11, 1), optimizer='Adam'):
         #Layer 0 of input is all p1 pos 
         #Layer 1 of input is all p2 pos
         #Layer 2 is who's moving
@@ -43,6 +44,7 @@ class NeuralNetwork:
             output = Activation('relu')(output)
             output = Dense(board_size ** 2)(output)
             output = Activation('sigmoid',name='policy_output')(output)
+            print(output)
             return output
 
         def add_value_head(model):
@@ -103,7 +105,7 @@ class NeuralNetwork:
         
 
 
-    def train_model(self, input_data, value_output_data, policy_output_data, epochs=5,batch_size=32):
+    def train_model(self, input_data, value_output_data, policy_output_data, epochs=5,batch_size=121):
         '''
         input_data is a game board of shape as specified in shape. Should be a 4D array
         value output should be a 3D array with shape (-1,1,121)
@@ -112,11 +114,16 @@ class NeuralNetwork:
         def loss(y_true, y_pred):
             p_true, v_true = y_true[0], y_true[1]
             p, v = y_pred[0], y_pred[1]
-            return k.square(v_true - v) - k.kullback_leibler_divergence(p_true, p)
-
+            return k.square(v_true - v) - categorical_crossentropy(p_true, p)
+            '''
         try:
             assert(len(input_data) == len(value_output_data) == len(policy_output_data))
         except AssertionError:
             raise Exception("Length(x)={} but Length(y)={}. Invalid data".format(len(x), len(y)))
-        self.model.compile(loss=loss, optimizer=SGD)        
+        '''
+        #print(input_data.shape, value_output_data.shape, policy_output_data.shape)
+        #print(input_data[0], value_output_data[0], policy_output_data[0])
+
+        sgd = SGD()
+        self.model.compile(loss=categorical_crossentropy, optimizer=sgd)
         self.model.fit(x=input_data, y={'policy_output':policy_output_data,'value_output':value_output_data}, batch_size=batch_size)

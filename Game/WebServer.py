@@ -28,10 +28,11 @@ class MCTS_Manager:
         history = self.gen_history(board)
         mcts = self.mcts
         mcts.execute_history(history)
-        RootNodePointer = mcts.root_node 
-        move = mcts.turn(computetime)
-        RootNodePointer[move].parent = RootNodePointer
-        return {'moveloc' : str(move), 'gamestate' : str(RootNodePointer[move].game.GameState)}
+        move = mcts.turn(computetime, False)
+        game = mcts.root_node[move].game
+        mcts.game = Game()
+        mcts.root_node = mcts.top
+        return {'moveloc' : str(move), 'gamestate' : str(game.GameState)}
     
     def gen_history(self,board):
         """
@@ -59,10 +60,10 @@ def processrequest():
     gamestate = GameLogic.GetGameState(curr_board)
     if gamestate !=0:
         print('Terminal Gamestate Reached')
-        return jsonify(gamestate=gamestate,player=-1)
+        return jsonify(gamestate=gamestate)
     else:
         output = MCTSM.MakeMove(computetime = indata['computetime'], board = curr_board)
-        print('Response at {time}:{data}'.format(time=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f'),data="-"))
+        print('Response at {time}:{data}'.format(time=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f') ,data=output))
         return jsonify(**output)
 
 if __name__ == "__main__":

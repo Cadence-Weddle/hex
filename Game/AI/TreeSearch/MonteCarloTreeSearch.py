@@ -8,14 +8,24 @@ def UCT(node, exploration_constant): #Magick? Please fix
 	return exploration_constant	* node.prior_probability * (np.sqrt(node.visit_count + 1) / (node.visit_count + 1))
 
 
-def argmax(list):
-	return sorted(list, key=lambda x: x.mean_action_value)[0]
+def argmax(list, all=False):
+	list = sorted(list, key=lambda x: x.mean_action_value)[0]
+	if all:
+		return list
+	else:
+		return list[0]
 
 def sum_nodes(list):
 	return sum([(lambda x:x.mean_action_value)(x) for x in list])
 
 def hash(ndarray):
 	return tuple(ndarray.flatten()).__hash__()
+
+def normilize(array):
+	if sum(array) == 0:
+		return array
+	else:
+		return array / np.sum(array)
 
 class Not_Proccessed:
 	pass
@@ -110,11 +120,22 @@ class  MCTS_Node(Node):
 		return subnodes
 
 	def dump(self):
-		return (self.game.board.reshape([11,11,1]), self.reward)
+		pArray= [] #Coverted into 'correct' policy head output
+		subnode_choices = [subnode.move for subnode in self.subnodes]
+		for i in range(121):
+			try:
+				if i in subnode_choices:
+					pArray.append(self.subnodes[subnode_choices.index(i)].mean_action_value)
+				else:
+					pArray.append(0)
+			except:
+				pArray.append(0)
+		return (self.game.board.reshape([11,11,1]), normilize(np.array(pArray)), self.reward)
 
 	def __str__(self):
 		return "{type_self}, Parent : {parent}, Number of subnodes : {subnodes}, expanded : {expanded}, move : {move}".format(type_self=type(self), parent=type(self.parent),subnodes=len(self.subnodes)
 		,expanded=self.expanded, move=self.move)
+	
 	def __repr__(self):
 		return self.__str__()
 
@@ -123,6 +144,7 @@ class  MCTS_Node(Node):
 			if subnode.move == move:
 				return subnode
 		return None
+
 
 class MonteCarloTreeSearch(Tree):
 	def __init__(self, game, model=None, processer=None,  **kwargs):
@@ -150,6 +172,8 @@ class MonteCarloTreeSearch(Tree):
 		while curr_node.expanded:
 			if curr_node.game.GameState != 0:
 				break
+			if curr_node.subnodes == []:
+				raise Exception("Something Bad Happened")
 			curr_node = argmax([node for node in curr_node.subnodes if not node.game.GameState])
 			curr_node.visit_count += 1
 		return curr_node	
@@ -164,7 +188,8 @@ class MonteCarloTreeSearch(Tree):
 			node.update_score()
 			node = node.parent
 
-	def turn(self, ComputeTime):
+
+	def turn(self, ComputeTime, convert_to_root=True):
 		start = time.time()
 		i = 0
 		while time.time() - start < ComputeTime / 1000:
@@ -174,27 +199,30 @@ class MonteCarloTreeSearch(Tree):
 
 		node = argmax(self.root_node.subnodes)
 		move = node.move
-		self.root_node = node
-		self.root_node.convert_to_root()
+		if convert_to_root:
+			self.root_node = node
+			self.root_node.convert_to_root()
 		return move
+
 
 	def train(self, gamma):
 		model = self.batch_processer.model
 		history = self.game.history
 		training_data = []
 		curr_node = self.top
+		
 		for move in history:
+			curr_node[move].parent = curr_node
 			curr_node = curr_node[move]
-		history = history[::-1]
-		i = 1
-		curr_node.reward = curr_node.game.NextPlayer
+
+		curr_node.reward = curr_node.game.GameState
+		
 		while curr_node.parent:
-			training_data.append(curr_node.dump)
-			curr_node.parent.reward = curr_node.parent[history[i]].reward * gamma
-			i += 1
+			training_data.append(curr_node.dump())
+			curr_node.parent.reward = curr_node.reward * gamma
 			curr_node = curr_node.parent 
 
-		pData = [x[1] for x in training_data]
-		vData = [x[2] for x in training_data]
-		inData = [x[0] for x in training_data]
-		return pData, inData, vData
+		pData = np.array([x[1] for x in training_data])
+		vData = np.array([x[2] for x in training_data])
+		inData = np.array([x[0] for x in training_data])
+		model.train_model(inData, vData, pData)
