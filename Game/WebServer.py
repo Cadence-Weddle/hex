@@ -8,7 +8,6 @@ import AI.GameLogic.GameLogic as GameLogic
 import AI.NeuralNetwork.NeuralNetwork as NeuralNetwork
 import AI.TreeSearch.MonteCarloTreeSearch as MonteCarloTreeSearch
 
-
 NN = NeuralNetwork.NeuralNetwork
 MCTS = MonteCarloTreeSearch.MonteCarloTreeSearch
 NNBP = MonteCarloTreeSearch.Neural_Network_Batch_Processer
@@ -36,7 +35,7 @@ class MCTS_Manager:
 
 	def gen_history(self, board):
 		"""
-		Returns <b>a</b> possible history of moves that could have led to that state. 
+		Returns a possible history of moves that could have led to that state. 
 		"""
 		history = []
 		p1 = [x for x,i in enumerate(board) if i == 1]
@@ -62,11 +61,13 @@ def hexgame():
 @app.route('/_processrequest', methods=['GET', 'POST'])
 def processrequest():
 	indata = request.get_json()
-	#print('Request Recived at {time}:{data}'.format(time=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f'),data=indata))
-	output =  MCTSM.MakeMove(computetime = indata['computetime'], board = indata['board'])
-	#print(output)
-	print('Response at {time}:{data}'.format(time=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f'),data="-"))
-	return jsonify(**output)
+	#Check if Game Has Reached Terminal State
+	if GameLogic.GetGameState(indata['board'])==0:
+		return jsonify({'gamestate':0})
+	else:
+		output =  MCTSM.MakeMove(computetime = indata['computetime'], board = indata['board'])
+		print('Response at {time}:{data}'.format(time=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f'),data="-"))
+		return jsonify(**output)
 
 
 if __name__ == "__main__":
