@@ -9,11 +9,6 @@ var statistics = Cookies.getJSON('statistics')
 document.getElementById("Wins").innerHTML = "Wins:"+statistics['wins']
 document.getElementById("Losses").innerHTML = "Losses:"+statistics['losses']
 
-
-//1st Initalization Sequence
-
-    
-
 //Will be dynamically Adjustable in the future.
 var BaseSize=(document.getElementById('CentralColumn').clientWidth)
 //var BaseSize=660
