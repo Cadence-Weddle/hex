@@ -7,9 +7,8 @@ import numpy as np
 import AI.GameLogic.GameLogic as GameLogic
 import AI.NeuralNetwork.NeuralNetwork as NeuralNetwork
 import AI.TreeSearch.MonteCarloTreeSearch as MonteCarloTreeSearch
-import threading
 import keras
-
+"""
 NN = NeuralNetwork.NeuralNetwork
 MCTS = MonteCarloTreeSearch.MonteCarloTreeSearch
 NNBP = MonteCarloTreeSearch.Neural_Network_Batch_Processer
@@ -35,23 +34,22 @@ class MCTS_Manager:
     
     def MakeMove(self, board, computetime):
         """
-		Dispatchs evaluater objects to threads. 	
+		#Dispatchs evaluater objects to threads. 	
 	    """
         return evaluater(self.mcts.top, self.mcts.processer, board, computetime)
     
 def gen_history(board):
         """
-        Returns a possible history of moves that could have led to that state. 
+        #Returns a possible history of moves that could have led to that state. 
         """
         board = np.array(board)
         p1 = np.where(board == 1)[0]
         p2 = np.where(board == 2)[0]
         lesser = min(len(p1),len(p2))
         return np.stack((p2[:lesser],p1[:lesser])).flatten('F')
-
+"""
 
 app = Flask(__name__)
-MCTSM = MCTS_Manager()
 
 @app.route("/")
 def hexgame():
@@ -67,7 +65,7 @@ def processrequest():
         print('Terminal Gamestate Reached')
         return jsonify(gamestate=gamestate)
     else:
-        output = MCTSM.MakeMove(computetime = indata['computetime'], board = curr_board).run()
+        output = MakeMove(computetime = indata['computetime'], board = curr_board)
         print('Response at {time}:{data}'.format(time=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f') ,data=output))
         return jsonify(**output)
 
