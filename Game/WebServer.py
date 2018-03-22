@@ -7,12 +7,23 @@ import numpy as np
 import AI.GameLogic.GameLogic as GameLogic
 import AI.NeuralNetwork.NeuralNetwork as NeuralNetwork
 import AI.TreeSearch.MonteCarloTreeSearch as MonteCarloTreeSearch
+import threading
 
 NN = NeuralNetwork.NeuralNetwork
 MCTS = MonteCarloTreeSearch.MonteCarloTreeSearch
 NNBP = MonteCarloTreeSearch.Neural_Network_Batch_Processer
 Game = GameLogic.Game
 
+class evaluater:
+	def __init__(self, root_node,nnbp,  board, computetime):
+		self.mcts = MCTS(Game(), nnbp)
+		self.board = board
+		self.computetime = computetime
+	def run(self):
+		self.mcts.execute_history(gen_history(self.board))
+		move = self.mcts.turn(computetime, False)
+		game = self.mcts.game
+		return {'moveloc' : move, 'gamestate' : game.GameState}
 
 class MCTS_Manager:
     def __init__(self):
@@ -23,18 +34,11 @@ class MCTS_Manager:
     
     def MakeMove(self, board, computetime):
         """
-        Performs Monte Carlo Tree Search from a specific board, with a specific amount of time for computation. 
-        """
-        history = self.gen_history(board)
-        mcts = self.mcts
-        mcts.execute_history(history)
-        move = mcts.turn(computetime, False)
-        game = mcts.root_node[move].game
-        mcts.game = Game()
-        mcts.root_node = mcts.top
-        return {'moveloc' : str(move), 'gamestate' : str(game.GameState)}
+		Dispatchs evaluater objects to threads. 	
+	    """
+        return evaluater(self.mcts.top, self.mcts.batch_processer, board, computetime)
     
-    def gen_history(self,board):
+def gen_history(board):
         """
         Returns a possible history of moves that could have led to that state. 
         """
@@ -62,9 +66,10 @@ def processrequest():
         print('Terminal Gamestate Reached')
         return jsonify(gamestate=gamestate)
     else:
-        output = MCTSM.MakeMove(computetime = indata['computetime'], board = curr_board)
+        output = MCTSM.MakeMove(computetime = indata['computetime'], board = curr_board).run()
         print('Response at {time}:{data}'.format(time=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f') ,data=output))
         return jsonify(**output)
 
 if __name__ == "__main__":
-    app.run(port=80,host= '0.0.0.0', threaded=True)
+	    app.run(host='0.0.0.0', port=80, threaded=True)
+
