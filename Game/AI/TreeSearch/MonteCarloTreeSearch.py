@@ -49,7 +49,7 @@ class Neural_Network_Batch_Processer:
 				if not node in self.queue:
 					self.queue.append(node)
 				self.run_batch()
-		except KeyError:
+		except:
 			if not node in self.queue:
 				self.queue.append(node)
 			self.run_batch()
