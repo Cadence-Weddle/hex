@@ -25,15 +25,3 @@ def MakeMove(computetime, board, humanplayer,):
 		mcts = MCTS(Game, NN())
 		move = mcts.turn(computetime)
 		return {'moveloc' : str(move), 'gamestate': str(Game.GameState)}
-
-class MCTS_Manager(threading.Thread):
-	def __init__(self):
-		self.game = Game()
-		self.nn = NN()
-		self.NNBP = NNBP(self.nn)
-		self.mcts = MCTS(self.game, processer=self.NNBP)
-
-if __name__ == "__main__":
-	game = Game()
-	nn = NN()
-	main(MCTS(game, nn))

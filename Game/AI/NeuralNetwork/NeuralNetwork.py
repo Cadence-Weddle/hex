@@ -9,6 +9,12 @@ from keras.losses import categorical_crossentropy
 import numpy as np
 import keras.backend as k
 
+def NNCreater(nn):
+    n = NeuralNetwork()
+    n.model = nn
+    print(n)
+    return n
+
 class NeuralNetwork:
     def __init__(self, resid_num_iter=10, input_shape=(11,11, 1), optimizer='Adam'):
         #Layer 0 of input is all p1 pos 
@@ -44,7 +50,6 @@ class NeuralNetwork:
             output = Activation('relu')(output)
             output = Dense(board_size ** 2)(output)
             output = Activation('sigmoid',name='policy_output')(output)
-            print(output)
             return output
 
         def add_value_head(model):
