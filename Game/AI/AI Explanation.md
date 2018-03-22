@@ -14,7 +14,12 @@ A game tree for Tic-Tac-Toe
 ### Traversing The Tree and Simple Tree Search
 To find a good move to play, the tree search algorithm
 
-### The Monte Carlo Method
+#### The Monte Carlo Method
+The fundemental principle of the Monte Carlo method is that many interations of a random simulation will converge upon some point. Applied to Tree Search, the method is designed so that it will converge on promising moves. 
+
+#### Scoring Methods and Multi-Armed Bandits
+
+#### Rollout Policies
 
 ## Machine Learning
 
