@@ -8,6 +8,7 @@ import AI.GameLogic.GameLogic as GameLogic
 import AI.NeuralNetwork.NeuralNetwork as NeuralNetwork
 import AI.TreeSearch.MonteCarloTreeSearch as MonteCarloTreeSearch
 import threading
+import keras
 
 NN = NeuralNetwork.NeuralNetwork
 MCTS = MonteCarloTreeSearch.MonteCarloTreeSearch
@@ -28,7 +29,7 @@ class evaluater:
 class MCTS_Manager:
     def __init__(self):
         self.game = Game()
-        self.nn = NN()
+        self.nn = NeuralNetwork.NNCreater(keras.models.load_model("AI\\NeuralNetwork\\SavedModel.h5"))
         self.nnbp = NNBP(self.nn)
         self.mcts = MCTS(self.game, processer=self.nnbp)
     
@@ -36,7 +37,7 @@ class MCTS_Manager:
         """
 		Dispatchs evaluater objects to threads. 	
 	    """
-        return evaluater(self.mcts.top, self.mcts.batch_processer, board, computetime)
+        return evaluater(self.mcts.top, self.mcts.processer, board, computetime)
     
 def gen_history(board):
         """
