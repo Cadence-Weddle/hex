@@ -9,11 +9,7 @@ def UCT(node, exploration_constant): #Magick? Please fix
 
 
 def argmax(list, all=False):
-	list = sorted(list, key=lambda x: x.mean_action_value)[0]
-	if all:
-		return list
-	else:
-		return list[0]
+	return sorted(list, key=lambda x: x.mean_action_value)[0]
 
 def sum_nodes(list):
 	return sum([(lambda x:x.mean_action_value)(x) for x in list])
@@ -103,21 +99,22 @@ class  MCTS_Node(Node):
 		self.update_score()
 	
 	def expand(self):
-		valid_moves = getattr(self.game, self.get_moves)()	
-		subnodes = []
-		r_probs = self.p.reshape([121])
-		for move, p in zip(valid_moves, r_probs):
-			temp = copy(self.game)
-			getattr(temp, self.make_move)(move)
-			subnodes.append(MCTS_Node(temp, self, self.processer, move, p, self.get_moves, self.make_move))
-		self.processer.add_list(subnodes)
+		if not self.game.GameState:	
+			valid_moves = getattr(self.game, self.get_moves)()	
+			subnodes = []
+			r_probs = self.p.reshape([121])
+			for move, p in zip(valid_moves, r_probs):
+				temp = copy(self.game)
+				getattr(temp, self.make_move)(move)
+				subnodes.append(MCTS_Node(temp, self, self.processer, move, p, self.get_moves, self.make_move))
+			self.processer.add_list(subnodes)
 
-		for node in subnodes:
-			node.set_nn_output(self.processer[node])
-		self.subnodes = subnodes
-		self.update_score()
+			for node in subnodes:
+				node.set_nn_output(self.processer[node])
+			self.subnodes = subnodes
+			self.update_score()
 
-		return subnodes
+			return subnodes
 
 	def dump(self):
 		pArray= [] #Coverted into 'correct' policy head output
@@ -149,13 +146,16 @@ class  MCTS_Node(Node):
 class MonteCarloTreeSearch(Tree):
 	def __init__(self, game, model=None, processer=None,  **kwargs):
 		self.game = game
-		self.batch_processer = processer if processer else Neural_Network_Batch_Processer(model)
+		if processer:
+			self.processer = processer
+		else:
+			self.processer = Neural_Network_Batch_Processer(model)
 
-		super().__init__(game, root_node=kwargs.get("rn", MCTS_Node(game, None, self.batch_processer, 0, get_moves="GetValidMoves", make_move="MakeMove")))#kwargs.get("get_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move")))
+		super().__init__(game, root_node=kwargs.get("rn", MCTS_Node(game, None, self.processer, 0, get_moves="GetValidMoves", make_move="MakeMove")))#kwargs.get("get_moves", "get_valid_moves"), make_move=kwargs.get("make_move", "make_move")))
 		self.top = self.root_node
 
-		self.batch_processer.add_node(self.root_node)
-		self.root_node.set_nn_output(self.batch_processer[self.root_node])
+		self.processer.add_node(self.root_node)
+		self.root_node.set_nn_output(self.processer[self.root_node])
 
 	def execute_history(self, history):
 		game = self.game
@@ -188,25 +188,20 @@ class MonteCarloTreeSearch(Tree):
 			node.update_score()
 			node = node.parent
 
-
 	def turn(self, ComputeTime, convert_to_root=True):
 		start = time.time()
-		i = 0
 		while time.time() - start < ComputeTime / 1000:
-			if not i:
-				i +=1
 			self.back_prop(self.expand_and_eval(self.select()))
-
 		node = argmax(self.root_node.subnodes)
 		move = node.move
 		if convert_to_root:
 			self.root_node = node
 			self.root_node.convert_to_root()
+		self.game.MakeMove(move)
 		return move
 
-
 	def train(self, gamma):
-		model = self.batch_processer.model
+		model = self.processer.model
 		history = self.game.history
 		training_data = []
 		curr_node = self.top
@@ -219,10 +214,10 @@ class MonteCarloTreeSearch(Tree):
 		
 		while curr_node.parent:
 			training_data.append(curr_node.dump())
-			curr_node.parent.reward = curr_node.reward * gamma
+			curr_node.parent.reward = curr_node.reward * gamma * -1
 			curr_node = curr_node.parent 
 
-		pData = np.array([x[1] for x in training_data])
-		vData = np.array([x[2] for x in training_data])
-		inData = np.array([x[0] for x in training_data])
-		model.train_model(inData, vData, pData)
+		pData = [x[1] for x in training_data]
+		vData = [x[2] for x in training_data]
+		inData = [x[0] for x in training_data]
+		return inData, pData, vData

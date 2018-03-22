@@ -105,7 +105,7 @@ class NeuralNetwork:
         
 
 
-    def train_model(self, input_data, value_output_data, policy_output_data, epochs=5,batch_size=121):
+    def train_model(self, input_data, value_output_data, policy_output_data, epochs=5,batch_size=8):
         '''
         input_data is a game board of shape as specified in shape. Should be a 4D array
         value output should be a 3D array with shape (-1,1,121)
@@ -125,5 +125,4 @@ class NeuralNetwork:
         #print(input_data[0], value_output_data[0], policy_output_data[0])
 
         sgd = SGD()
-        self.model.compile(loss=categorical_crossentropy, optimizer=sgd)
-        self.model.fit(x=input_data, y={'policy_output':policy_output_data,'value_output':value_output_data}, batch_size=batch_size)
+        self.model.fit(x=input_data, y={'policy_output':policy_output_data,'value_output':value_output_data}, batch_size=batch_size, epochs=epochs)
