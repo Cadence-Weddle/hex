@@ -9,6 +9,7 @@ import time
 import threading
 import keras
 
+NN = NN.NeuralNetwork
 MCTS = MonteCarloTreeSearch.MonteCarloTreeSearch
 NNBP = MonteCarloTreeSearch.Neural_Network_Batch_Processer
 Game = GameLogic.Game
