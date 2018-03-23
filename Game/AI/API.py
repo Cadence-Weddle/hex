@@ -3,18 +3,18 @@ import random
 import numpy as np
 import AI.GameLogic.GameLogic as GameLogic
 import AI.TreeSearch.MonteCarloTreeSearch as MonteCarloTreeSearch
-import AI.NeuralNetwork.NeuralNetwork as NN
+import AI.NeuralNetwork.NeuralNetwork as NeN
 from copy import deepcopy
 import time
 import threading
 import keras
 
-NN = NN.NeuralNetwork
+NN = NeN.NeuralNetwork
 MCTS = MonteCarloTreeSearch.MonteCarloTreeSearch
 NNBP = MonteCarloTreeSearch.Neural_Network_Batch_Processer
 Game = GameLogic.Game
 def open():
-	nn = NN.NNCreater(keras.models.load_model("AI\\NeuralNetwork\\SavedModel.h5"))
+	nn = NeN.NNCreater(keras.models.load_model("AI\\NeuralNetwork\\SavedModel.h5"))
 	return nn
 
 nn = open()
