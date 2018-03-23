@@ -42,7 +42,7 @@ def MakeMove(computetime, board, humanplayer=None,):
 def _MakeMove_(computetime, board, humanplayer=None):
 	game = Game()
 	game.board = [x if x == 1 else -1 for x in board]
-	Game.NextPlayer = -1
-	Game.InvertBoard()
+	game.NextPlayer = -1
+	game.InvertBoard()
 	mcts = MCTS(game, NN())
 	return {'moveloc' : mcts.turn(10), 'gamestate' : str(mcts.game.GameState)}
