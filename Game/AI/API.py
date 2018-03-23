@@ -14,7 +14,7 @@ MCTS = MonteCarloTreeSearch.MonteCarloTreeSearch
 NNBP = MonteCarloTreeSearch.Neural_Network_Batch_Processer
 Game = GameLogic.Game
 def open():
-	nn = NeN.NNCreater(keras.models.load_model("AI\\NeuralNetwork\\SavedModel.h5"))
+	nn = NeN.NNCreater(keras.models.load_model("AI/NeuralNetwork/SavedModel.h5"))
 	return nn
 
 nn = open()
