@@ -46,4 +46,4 @@ def _MakeMove_(computetime, board, humanplayer=None):
 	game.NextPlayer = -1
 	game.InvertBoard()
 	mcts = MCTS(game, NN())
-	return {'moveloc' : mcts.turn(10), 'gamestate' : str(mcts.game.GameState)}
+	return {'moveloc' : str(mcts.turn(10)), 'gamestate' : str(mcts.game.GameState)}

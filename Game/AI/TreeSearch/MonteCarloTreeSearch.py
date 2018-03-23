@@ -39,7 +39,7 @@ class Neural_Network_Batch_Processer:
 		self.model = model
 
 	def run_batch(self):
-		outs = self.model.foward_prop([x.game.board for x in self.queue])
+		outs = self.model.foward_prop([x.game.board.reshape([11,11,1]) for x in self.queue])
 		for x, i in enumerate(self.queue):
 			self.return_dict[hash(i.game.board)] = outs[x]
 
@@ -163,7 +163,7 @@ class MonteCarloTreeSearch(Tree):
 			curr_node = curr_node[move]
 		self.root_node = curr_node
 		self.root_node.convert_to_root()
-		
+
 
 	def select(self):
 		curr_node = self.root_node
