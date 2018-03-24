@@ -12,12 +12,29 @@ Each layer of edges represents a switch in players. When the game reaches a term
 
 A game tree for Tic-Tac-Toe
 ### Traversing The Tree and Simple Tree Search
-To find a good move to play, the tree search algorithm
+To find a good move to play, the tree search algorithm traverses the tree. Simple methods that can be used are mini-max, and alpha-beta tree search, however, these non-heuristic methods do not work well under problems with high branching factors, such as hex.
 
 #### The Monte Carlo Method
-The fundemental principle of the Monte Carlo method is that many interations of a random simulation will converge upon some point. Applied to Tree Search, the method is designed so that it will converge on promising moves. 
+The fundemental principle of the Monte Carlo method is that many interations of a random simulation will converge upon some point. Applied to Tree Search, the method is designed so that it will converge on promising moves.
+Each node in the Monte Carlo Searh Tree has the following values:
+    1. visit_count = 0        # N(s,a)
+		2. mean_action_value = 0  # Q(s,a) || Acts as "score" it is what the MCTS considers.
+		3. score = 0 #Neural network based evaluation | Ignores subnodes. 
+		4. Expanded = False #Reached by MCTS search during the selection phase. 
+		1prior_probability = prior_probability #Taken from the Parent node
+		self.evaluation_function = UCT #Magic
+		self.move = move #move required to take the game from the parent node's state to the current state.
+
+Monte Carlo Tree Search follows a 4 step process:
+1. Selection: Starting from some root node, successive child nodes are chosen by finding the most optimal points though the UCB1 heuristic (The maximum is chosen), the game tree expands towards that move.
+2. Expansion, If said state is not a terminal state, create another child node and choose a node from one of those
+3. Simulation: Play a random playout from the child node, or in this case, feed the game state data into the neural network network.
+4. Backpropogation: Update the win/loss ratios for each of the nodes.
+
+![Steps of Monte Carlo Tree Search](https://upload.wikimedia.org/wikipedia/commons/6/62/MCTS_%28English%29_-_Updated_2017-11-19.svg)
 
 #### Scoring Methods and Multi-Armed Bandits
+In this case
 
 #### Rollout Policies
 
