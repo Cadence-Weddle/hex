@@ -140,7 +140,7 @@ class  MCTS_Node(Node):
 		for subnode in self.subnodes:
 			if subnode.move == move:
 				return subnode
-		return None
+		return random.choice(self.subnodes)
 
 
 class MonteCarloTreeSearch(Tree):
@@ -161,6 +161,8 @@ class MonteCarloTreeSearch(Tree):
 			game.MakeMove(move)
 			curr_node.expand()
 			curr_node = curr_node[move]
+			if not curr_node:
+				print(curr_node)
 		self.root_node = curr_node
 		self.root_node.convert_to_root()
 

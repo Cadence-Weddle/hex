@@ -91,9 +91,11 @@ class  MCTS_Node(Node):
 
 	def play(self):
 		choice = random.choice(self.subnodes)
-		choice.expand()
-		choice.visits += 1
-		result = policy(choice)
+		if choice.game.GameState:
+			result = choice.game.GameState	
+		else:
+			choice.visits += 1
+			result = policy(choice)
 		if result == 1:
 			choice.wins += 1
 		else:

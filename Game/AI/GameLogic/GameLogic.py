@@ -3,7 +3,6 @@ from copy import deepcopy as copy
 
 class Game():
 	def __init__(self):
-    
 		self.board = np.zeros([121])
 		self.GameState = 0
 		self.NextPlayer = -1 
@@ -11,9 +10,6 @@ class Game():
 		self.history = []
 
 	def MakeMove(self, location, player=None):
-    """
-    Game.MakeMove modfies the array Game.board and Game.NextMoveBoard 
-    """
 		player = player if player else self.NextPlayer
 		MakeMove(self.NextMoveBoard, location, player, PlayerSchema={"player1" : 1, "player2" : -1})
 		self.history.append(location)
@@ -27,8 +23,7 @@ class Game():
 	def GetValidMoves(self):
 		if not self.GameState:
 				board = self.NextMoveBoard
-				return GetValidMoves(board)
-    return []
+				return GetValidMoves(board)	
 
 	def GetGameState(self):
 		return self.GameState
