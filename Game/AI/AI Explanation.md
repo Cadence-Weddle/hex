@@ -17,11 +17,11 @@ To find a good move to play, the tree search algorithm traverses the tree. Simpl
 #### The Monte Carlo Method
 The fundemental principle of the Monte Carlo method is that many interations of a random simulation will converge upon some point. Applied to Tree Search, the method is designed so that it will converge on promising moves.
 Each node in the Monte Carlo Searh Tree has the following values:
-    1. visit_count = 0        # N(s,a)
-		2. mean_action_value = 0  # Q(s,a) || Acts as "score" it is what the MCTS considers.
-		3. score = 0 #Neural network based evaluation | Ignores subnodes. 
-		4. Expanded = False #Reached by MCTS search during the selection phase. 
-		1prior_probability = prior_probability #Taken from the Parent node
+ 1. visit ount
+ 2. mean action value :Acts as "score", it is what the MCTS considers.
+3. score: #Neural network based evaluation | Ignores subnodes. 
+ 4. Expanded = False #Reached by MCTS search during the selection phase. 
+5prior_probability = prior_probability #Taken from the Parent node
 		self.evaluation_function = UCT #Magic
 		self.move = move #move required to take the game from the parent node's state to the current state.
 
