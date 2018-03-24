@@ -2,23 +2,24 @@
 import random
 import numpy as np
 import AI.GameLogic.GameLogic as GameLogic
-import AI.TreeSearch.MonteCarloTreeSearch as MonteCarloTreeSearch
-import AI.NeuralNetwork.NeuralNetwork as NeN
+import AI.TreeSearch.PureMonteCarloTreeSearch as MonteCarloTreeSearch
+#import AI.NeuralNetwork.NeuralNetwork as NeN
 from copy import deepcopy
 import time
 import threading
-import keras
+#import keras
 
-NN = NeN.NeuralNetwork
+#NN = NeN.NeuralNetwork
 MCTS = MonteCarloTreeSearch.MonteCarloTreeSearch
-NNBP = MonteCarloTreeSearch.Neural_Network_Batch_Processer
+#NNBP = MonteCarloTreeSearch.Neural_Network_Batch_Processer
 Game = GameLogic.Game
+'''
 def open():
 	nn = NeN.NNCreater(keras.models.load_model("AI/NeuralNetwork/SavedModel.h5"))
 	return nn
 
 nn = open()
-
+'''
 def _MakeMove(computetime,board,humanplayer):
 	return {'moveloc':str(np.random.choice([x for x in range(121)])),'gamestate':str(np.random.choice([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,2]))}
 
@@ -28,18 +29,28 @@ def gen_history(board):
         """
         board = np.array(board)
         p1 = np.where(board == 1)[0]
-        p2 = np.where(board == 2)[0]
+        p2 = np.where(board == -1)[0]
         lesser = min(len(p1),len(p2))
         return np.stack((p2[:lesser],p1[:lesser])).flatten('F')
 
+'''
+def gen_history(board):
+	p1 = np.where(board == 1)
+	p2 = np.where(board == -1)
+'''
+
+
 def MakeMove(computetime, board, humanplayer=None,):
-		mcts = MCTS(Game(), nn)
+		mcts = MCTS(Game())
 		board = np.array([x if x == 1 or x == 0 else -1 for x in board])
-		mcts.execute_history(gen_history(board))
+		h = gen_history(board)
+		print(h)
+		mcts.execute_history(h)
 		move = mcts.turn(computetime, convert_to_root=False)
 		gamestate = mcts.game.GameState
 		return {'moveloc' : str(move), 'gamestate': str(gamestate)}
 
+'''
 def _MakeMove_(computetime, board, humanplayer=None):
 	game = Game()
 	game.board = [x if x == 1 else -1 for x in board]
@@ -47,3 +58,4 @@ def _MakeMove_(computetime, board, humanplayer=None):
 	game.InvertBoard()
 	mcts = MCTS(game, NN())
 	return {'moveloc' : str(mcts.turn(10)), 'gamestate' : str(mcts.game.GameState)}
+'''

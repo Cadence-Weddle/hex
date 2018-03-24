@@ -101,7 +101,7 @@ class NeuralNetwork:
         if type(data) != np.array:
             data = np.array(data)
         output_data = self.model.predict(np.array(data), batch_size=BatchSize)
-        
+
         ___ = range(len(output_data[0]))
         policies = [output_data[0][i] for i in ___]
         #        policies_argmax = [np.argmax(output_data[0][i]) for i in ___]
@@ -110,17 +110,14 @@ class NeuralNetwork:
         
 
 
-    def train_model(self, input_data, value_output_data, policy_output_data, epochs=5,batch_size=8):
+    def train_model(self, input_data, value_output_data, policy_output_data, epochs=10,batch_size=64):
         '''
         input_data is a game board of shape as specified in shape. Should be a 4D array
         value output should be a 3D array with shape (-1,1,121)
         policy output is a 2D array with shape (-1,1)
         '''
-        def loss(y_true, y_pred):
-            p_true, v_true = y_true[0], y_true[1]
-            p, v = y_pred[0], y_pred[1]
-            return k.square(v_true - v) - categorical_crossentropy(p_true, p)
-            '''
+
+        '''
         try:
             assert(len(input_data) == len(value_output_data) == len(policy_output_data))
         except AssertionError:
@@ -128,6 +125,5 @@ class NeuralNetwork:
         '''
         #print(input_data.shape, value_output_data.shape, policy_output_data.shape)
         #print(input_data[0], value_output_data[0], policy_output_data[0])
-
-        sgd = SGD()
+        #policy_output_data = policy_output_data.reshape([len(input_data), 121, 1])
         self.model.fit(x=input_data, y={'policy_output':policy_output_data,'value_output':value_output_data}, batch_size=batch_size, epochs=epochs)
