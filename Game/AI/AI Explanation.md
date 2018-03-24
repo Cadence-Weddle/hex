@@ -17,32 +17,33 @@ To find a good move to play, the tree search algorithm traverses the tree. Simpl
 #### The Monte Carlo Method
 The fundemental principle of the Monte Carlo method is that many interations of a random simulation will converge upon some point. Applied to Tree Search, the method is designed so that it will converge on promising moves.
 Each node in the Monte Carlo Searh Tree has the following values:
- 1. visit ount
- 2. mean action value :Acts as "score", it is what the MCTS considers.
+1. Visit Count
+2. Mean action value: Acts as "score", it is what the MCTS considers.
 3. score: #Neural network based evaluation | Ignores subnodes. 
- 4. Expanded = False #Reached by MCTS search during the selection phase. 
-5prior_probability = prior_probability #Taken from the Parent node
-		self.evaluation_function = UCT #Magic
-		self.move = move #move required to take the game from the parent node's state to the current state.
+4. Expanded: Reached by MCTS search during the selection phase. 
+5. Prior_probability: Taken from the Parent node
+7. Move: Move #move required to take the game from the parent node's state to the current state
+8. Wins: Number of wins
 
 Monte Carlo Tree Search follows a 4 step process:
 1. Selection: Starting from some root node, successive child nodes are chosen by finding the most optimal points though the UCB1 heuristic (The maximum is chosen), the game tree expands towards that move.
 2. Expansion, If said state is not a terminal state, create another child node and choose a node from one of those
-3. Simulation: Play a random playout from the child node, or in this case, feed the game state data into the neural network network.
-4. Backpropogation: Update the win/loss ratios for each of the nodes.
+3. Simulation: Play a random playout from the child node, or in this case, feed the game state data into the neural network network and retrive the output of the value head.
+4. Backpropogation: Update all values for the scores.
+5. Iterate though the previous processes, when time is up, or the desired iteration count is reached, stop, and find the most promising move.
 
 ![Steps of Monte Carlo Tree Search](https://upload.wikimedia.org/wikipedia/commons/6/62/MCTS_%28English%29_-_Updated_2017-11-19.svg)
 
 #### Scoring Methods and Multi-Armed Bandits
-In this case
+For scoring, the Upper Confidence Bound 1 applied to trees (UCT1) is used as an exploration heurisitc, it is given as follows:
+![UCT1](https://wikimedia.org/api/rest_v1/media/math/render/svg/b607bd848f08876b247148bad27c3c26a1066a0d).
+wi stands for the number of wins for the node considered after the i-th move
+ni stands for the number of simulations for the node considered after the i-th move
+Ni stands for the total number of simulations after the i-th move
+c is the exploration parameter—theoretically equal to √2; in practice usually chosen empirically
 
-#### Rollout Policies
+This algorthim makes sense, as it combines the uncertainty of unvisted nodes, and favors towards them, and also factors in proven "good" nodes.
 
-## Machine Learning
-
-## Tying it Together
-
-## Implementing the Logic for Hex
 
 ## Interacting with the AI
 For more information about how the AI is presented, [click here](https://github.com/Cadence-Weddle/hex.github.io/blob/master/Game/Web%20Server%20and%20Frontend%20Explanation.md).
