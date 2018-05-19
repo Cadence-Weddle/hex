@@ -23,7 +23,7 @@ class foo:
 	def __init__(self):
 		self.nn = open()
 	def MakeMove(self, board, computetime):
-		mcts = MCTS(Game(), self.nn)
+		mcts = MCTS(Game(), self.nn)	
 		mcts.execute_history(gen_history(board))
 
 		return {'moveloc' : str(mcts.turn(computetime)), 'gamestate' : str(mcts.game.GameState)}

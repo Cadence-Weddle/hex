@@ -147,7 +147,7 @@ class MonteCarloTreeSearch(Tree):
 			print("done")
 		self.root_node = curr_node
 		self.root_node.convert_to_root()
-		
+
 
 	def select(self):
 		curr_node = self.root_node
